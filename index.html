@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.7/d3.layout.cloud.min.js"></script>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
         
         * {
             margin: 0;
@@ -15,314 +15,763 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --success: #059669;
+            --warning: #ea580c;
+            --danger: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.7;
-            color: #1f2937;
-            background: #f9fafb;
+            color: var(--gray-800);
+            background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
             font-size: 16px;
+            overflow-x: hidden;
+        }
+        
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Scroll Progress Indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .fab.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .fab:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.4);
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
         
+        /* Fade-in animation for sections */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
         .header {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
+            border-radius: 20px;
+            padding: 50px;
             margin-bottom: 40px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid #2563eb;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            border-radius: 50%;
+            transform: translate(50%, -50%);
         }
         
         .header h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 12px;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 16px;
             line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .header .subtitle {
-            font-size: 1.125rem;
-            color: #6b7280;
-            margin-bottom: 24px;
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            margin-bottom: 30px;
+            font-weight: 500;
         }
         
         .methodology-note {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 16px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
             font-size: 0.875rem;
             color: #92400e;
+            position: relative;
+            font-weight: 500;
         }
         
         .stats-overview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
             margin-bottom: 40px;
         }
         
         .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
+            border-radius: 16px;
+            padding: 32px 24px;
             text-align: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border-top: 3px solid #2563eb;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(124, 58, 237, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 1;
         }
         
         .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2563eb;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
         }
         
         .stat-label {
             font-size: 0.875rem;
-            font-weight: 500;
-            color: #6b7280;
+            font-weight: 600;
+            color: var(--gray-600);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
+            position: relative;
+            z-index: 1;
         }
         
         .section {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
+            border-radius: 20px;
+            padding: 50px;
             margin-bottom: 40px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
         }
         
         .section h2 {
-            font-size: 1.875rem;
+            font-size: 2.25rem;
             font-weight: 700;
-            color: #111827;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #e5e7eb;
+            color: var(--gray-900);
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--gray-200);
+            position: relative;
+        }
+        
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--primary);
         }
         
         .section h3 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            color: #374151;
-            margin: 32px 0 16px 0;
+            color: var(--gray-700);
+            margin: 40px 0 20px 0;
         }
         
         .section p {
-            margin-bottom: 16px;
-            color: #374151;
+            margin-bottom: 20px;
+            color: var(--gray-700);
+            font-size: 1.0625rem;
+            line-height: 1.8;
         }
         
         .key-finding {
-            background: #dbeafe;
-            border: 1px solid #2563eb;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 24px 0;
-            font-weight: 500;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 28px;
+            margin: 32px 0;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .key-finding::before {
+            content: '💡';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            opacity: 0.7;
         }
         
         .key-finding strong {
-            color: #1d4ed8;
+            color: var(--primary-dark);
         }
         
         .chart-container {
-            margin: 32px 0;
-            padding: 24px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            margin: 40px 0;
+            padding: 32px;
+            background: linear-gradient(135deg, var(--gray-50), #ffffff);
+            border-radius: 16px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
         }
         
         .bar-chart {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 16px;
+            margin-top: 24px;
         }
         
         .bar-item {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
+            padding: 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .bar-item:hover {
+            transform: translateX(4px);
         }
         
         .bar-label {
             min-width: 200px;
-            font-weight: 500;
-            color: #374151;
-            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.9375rem;
+            position: relative;
         }
         
         .bar {
-            height: 24px;
-            background: #2563eb;
-            border-radius: 4px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding-right: 8px;
+            padding-right: 12px;
             color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            transition: width 1s ease-out;
-            min-width: 30px;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .bar:hover::before {
+            left: 100%;
         }
         
         .wordcloud-container {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 32px;
-            margin: 32px 0;
+            background: linear-gradient(135deg, var(--gray-50), #ffffff);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 40px 0;
             text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wordcloud-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
         }
         
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 24px 0;
-            font-size: 0.875rem;
+            margin: 32px 0;
+            font-size: 0.9375rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
         }
         
         .data-table th,
         .data-table td {
-            padding: 12px;
+            padding: 16px 20px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--gray-200);
+            transition: background-color 0.2s ease;
         }
         
         .data-table th {
-            background: #f9fafb;
-            font-weight: 600;
-            color: #374151;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: var(--gray-50);
+            transform: scale(1.005);
+        }
+        
+        .data-table tbody tr {
+            transition: all 0.2s ease;
         }
         
         .quote-block {
-            background: #f3f4f6;
-            border-left: 4px solid #6b7280;
-            border-radius: 0 8px 8px 0;
-            padding: 20px;
-            margin: 24px 0;
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-50));
+            border-left: 6px solid var(--gray-500);
+            border-radius: 0 16px 16px 0;
+            padding: 28px;
+            margin: 32px 0;
             font-style: italic;
-            color: #4b5563;
+            color: var(--gray-700);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        
+        .quote-block::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--gray-300);
+            font-family: serif;
+            line-height: 1;
         }
         
         .quote-author {
             font-style: normal;
-            font-weight: 500;
-            color: #6b7280;
-            margin-top: 8px;
-            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-top: 16px;
+            font-size: 0.9375rem;
         }
         
         .findings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin: 32px 0;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 28px;
+            margin: 40px 0;
         }
         
         .finding-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 24px;
+            background: linear-gradient(135deg, var(--gray-50), #ffffff);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .finding-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--accent));
+        }
+        
+        .finding-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
         }
         
         .finding-card h4 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 16px;
         }
         
         .finding-card .number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 8px;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 12px;
+            line-height: 1;
         }
         
         .critical-issues {
-            background: #fef2f2;
-            border: 1px solid #fca5a5;
-            border-radius: 8px;
-            padding: 24px;
-            margin: 24px 0;
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            border: 2px solid var(--danger);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 32px 0;
+            position: relative;
+        }
+        
+        .critical-issues::before {
+            content: '⚠️';
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 2rem;
         }
         
         .critical-issues h3 {
-            color: #dc2626;
+            color: var(--danger);
             margin-top: 0;
         }
         
         .opportunities {
-            background: #f0fdf4;
-            border: 1px solid #86efac;
-            border-radius: 8px;
-            padding: 24px;
-            margin: 24px 0;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 2px solid var(--success);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 32px 0;
+            position: relative;
+        }
+        
+        .opportunities::before {
+            content: '🚀';
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 2rem;
         }
         
         .opportunities h3 {
-            color: #059669;
+            color: var(--success);
             margin-top: 0;
         }
         
         .conclusion {
-            background: #1f2937;
+            background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
             color: white;
-            border-radius: 12px;
-            padding: 40px;
+            border-radius: 20px;
+            padding: 50px;
             margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .conclusion::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1), transparent);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
         }
         
         .conclusion h2 {
             color: white;
-            border-bottom-color: #374151;
+            border-bottom-color: var(--gray-700);
+        }
+        
+        .conclusion h3 {
+            color: var(--gray-200);
         }
         
         .conclusion p {
-            color: #d1d5db;
+            color: var(--gray-300);
         }
         
+        /* Enhanced Mobile Responsiveness */
         @media (max-width: 768px) {
             .container {
                 padding: 20px 16px;
             }
             
+            .header {
+                padding: 30px 24px;
+                margin-bottom: 30px;
+            }
+            
             .header h1 {
-                font-size: 1.875rem;
+                font-size: 2rem;
             }
             
             .section {
-                padding: 24px;
+                padding: 30px 24px;
+                margin-bottom: 30px;
+            }
+            
+            .section h2 {
+                font-size: 1.75rem;
             }
             
             .bar-label {
-                min-width: 140px;
-                font-size: 0.8rem;
+                min-width: 120px;
+                font-size: 0.8125rem;
             }
             
             .stats-overview {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
             }
+            
+            .stat-card {
+                padding: 20px 16px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .findings-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .fab {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .wordcloud-container {
+                padding: 24px 16px;
+            }
+            
+            .chart-container {
+                padding: 24px 16px;
+            }
+            
+            .bar-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .bar-label {
+                min-width: auto;
+                width: 100%;
+            }
+            
+            .bar {
+                width: 100%;
+                min-width: 100px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 12px 8px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        /* Pulse Animation for Key Elements */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Smooth Reveal Animation */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-in-up {
+            animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <!-- Floating Action Button -->
+    <div class="fab" id="fabButton" onclick="scrollToTop()">
+        ↑
+    </div>
+    
     <div class="container">
-        <div class="header">
+        <div class="header fade-in">
             <h1>The State of BC's AI Ecosystem</h1>
             <p class="subtitle">Survey Analysis • May 2025</p>
             <div class="methodology-note">
@@ -330,26 +779,26 @@
             </div>
         </div>
 
-        <div class="stats-overview">
-            <div class="stat-card">
+        <div class="stats-overview fade-in">
+            <div class="stat-card" onclick="highlightSection('survey-details')">
                 <span class="stat-number">41</span>
                 <span class="stat-label">Survey Responses</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" onclick="highlightSection('completion-rate')">
                 <span class="stat-number">97.6%</span>
                 <span class="stat-label">Average Completeness</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" onclick="highlightSection('methodology')">
                 <span class="stat-number">10</span>
                 <span class="stat-label">Survey Questions</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" onclick="highlightSection('timeline')">
                 <span class="stat-number">May 2025</span>
                 <span class="stat-label">Collection Period</span>
             </div>
         </div>
 
-        <div class="section">
+        <div class="section fade-in">
             <h2>What We Found</h2>
             <p>In May 2025, we surveyed members of British Columbia's artificial intelligence community to understand their experiences, challenges, and aspirations. The results paint a picture of an ecosystem with significant strengths alongside persistent barriers.</p>
             
@@ -360,14 +809,14 @@
             <p>The survey captured responses from 41 individuals across various sectors, including researchers, entrepreneurs, developers, and other AI practitioners. Despite the relatively small sample size, clear patterns emerged that warrant attention from community leaders and policymakers.</p>
         </div>
 
-        <div class="section">
+        <div class="section fade-in">
             <h2>Community Inclusion Analysis</h2>
             
             <p>When asked about their sense of belonging in BC's AI community, respondents provided a nuanced picture of inclusion and exclusion.</p>
 
             <div class="chart-container">
                 <h3>Community Belonging Experiences</h3>
-                <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 16px;">Based on 41 survey responses</p>
+                <p style="font-size: 0.875rem; color: var(--gray-500); margin-bottom: 16px;">Based on 41 survey responses</p>
                 <div class="bar-chart" id="inclusion-chart"></div>
             </div>
 
@@ -403,14 +852,14 @@
             </div>
         </div>
 
-        <div class="section">
+        <div class="section fade-in">
             <h2>Theme Analysis: What Matters Most</h2>
             
             <p>We analyzed all survey responses to identify recurring themes. The frequency of mentions reveals community priorities and concerns.</p>
 
             <div class="wordcloud-container">
                 <h3>Community Conversation Topics</h3>
-                <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 20px;">Word size reflects frequency of mentions across all responses</p>
+                <p style="font-size: 0.875rem; color: var(--gray-500); margin-bottom: 20px;">Word size reflects frequency of mentions across all responses</p>
                 <div id="wordcloud"></div>
             </div>
 
@@ -437,7 +886,7 @@
             </table>
         </div>
 
-        <div class="section">
+        <div class="section fade-in">
             <h2>Critical Issues Identified</h2>
 
             <div class="critical-issues">
@@ -453,7 +902,7 @@
             </div>
         </div>
 
-        <div class="section">
+        <div class="section fade-in">
             <h2>Innovation Pipeline</h2>
             
             <p>Despite challenges, the community demonstrates significant innovation potential:</p>
@@ -471,14 +920,14 @@
             </div>
         </div>
 
-        <div class="section">
+        <div class="section fade-in">
             <h2>Ethical Considerations</h2>
             
             <p>Respondents identified several ethical concerns that require ongoing attention:</p>
 
             <div class="chart-container">
                 <h3>Top Ethical Concerns</h3>
-                <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 16px;">Multiple responses allowed per participant</p>
+                <p style="font-size: 0.875rem; color: var(--gray-500); margin-bottom: 16px;">Multiple responses allowed per participant</p>
                 <div class="bar-chart" id="ethics-chart"></div>
             </div>
 
@@ -488,7 +937,7 @@
             </div>
         </div>
 
-        <div class="conclusion">
+        <div class="conclusion fade-in">
             <h2>Evidence-Based Recommendations</h2>
             
             <p>Based on the survey findings, we recommend four priority actions:</p>
@@ -510,63 +959,113 @@
     </div>
 
     <script>
-        // Data for visualizations
+        // Enhanced data structures
         const inclusionData = [
-            { label: "Feel Welcomed", value: 29 },
-            { label: "Neutral Experience", value: 12 },
-            { label: "No Response", value: 0 }
+            { label: "Feel Welcomed", value: 29, color: "var(--success)" },
+            { label: "Neutral Experience", value: 12, color: "var(--warning)" },
+            { label: "No Response", value: 0, color: "var(--gray-400)" }
         ];
 
         const barriersData = [
-            { label: "Financial Barriers", value: 8 },
-            { label: "Time Constraints", value: 6 },
-            { label: "Geographic Distance", value: 5 },
-            { label: "Technical Knowledge Gap", value: 4 },
-            { label: "Network Access", value: 3 }
+            { label: "Financial Barriers", value: 8, color: "var(--danger)" },
+            { label: "Time Constraints", value: 6, color: "var(--warning)" },
+            { label: "Geographic Distance", value: 5, color: "var(--secondary)" },
+            { label: "Technical Knowledge Gap", value: 4, color: "var(--primary)" },
+            { label: "Network Access", value: 3, color: "var(--accent)" }
         ];
 
         const themesData = [
-            { label: "Community", value: 141 },
-            { label: "Infrastructure", value: 98 },
-            { label: "Funding", value: 97 },
-            { label: "Talent", value: 60 },
-            { label: "Ethics", value: 47 },
-            { label: "Startups", value: 43 },
-            { label: "Research", value: 40 },
-            { label: "Government", value: 32 }
+            { label: "Community", value: 141, color: "var(--primary)" },
+            { label: "Infrastructure", value: 98, color: "var(--accent)" },
+            { label: "Funding", value: 97, color: "var(--danger)" },
+            { label: "Talent", value: 60, color: "var(--success)" },
+            { label: "Ethics", value: 47, color: "var(--secondary)" },
+            { label: "Startups", value: 43, color: "var(--warning)" },
+            { label: "Research", value: 40, color: "var(--primary)" },
+            { label: "Government", value: 32, color: "var(--gray-600)" }
         ];
 
         const projectsData = [
-            { label: "Healthcare Applications", value: 12 },
-            { label: "Infrastructure Tools", value: 10 },
-            { label: "Creative Projects", value: 8 },
-            { label: "Business Solutions", value: 5 },
-            { label: "Government Services", value: 3 }
+            { label: "Healthcare Applications", value: 12, color: "var(--success)" },
+            { label: "Infrastructure Tools", value: 10, color: "var(--primary)" },
+            { label: "Creative Projects", value: 8, color: "var(--secondary)" },
+            { label: "Business Solutions", value: 5, color: "var(--accent)" },
+            { label: "Government Services", value: 3, color: "var(--warning)" }
         ];
 
         const ethicsData = [
-            { label: "Responsibility & Accountability", value: 12 },
-            { label: "Human-Centered Approach", value: 8 },
-            { label: "Equity & Access", value: 6 },
-            { label: "Transparency & Dialogue", value: 5 },
-            { label: "Labor Impact", value: 4 },
-            { label: "Bias & Fairness", value: 3 }
+            { label: "Responsibility & Accountability", value: 12, color: "var(--primary)" },
+            { label: "Human-Centered Approach", value: 8, color: "var(--success)" },
+            { label: "Equity & Access", value: 6, color: "var(--accent)" },
+            { label: "Transparency & Dialogue", value: 5, color: "var(--secondary)" },
+            { label: "Labor Impact", value: 4, color: "var(--warning)" },
+            { label: "Bias & Fairness", value: 3, color: "var(--danger)" }
         ];
 
         const wordData = [
-            { text: "community", size: 40, count: 141 },
-            { text: "funding", size: 35, count: 97 },
-            { text: "infrastructure", size: 32, count: 98 },
-            { text: "talent", size: 28, count: 60 },
-            { text: "ethics", size: 25, count: 47 },
-            { text: "startups", size: 22, count: 43 },
-            { text: "research", size: 20, count: 40 },
-            { text: "government", size: 18, count: 32 },
-            { text: "collaboration", size: 16, count: 25 },
-            { text: "innovation", size: 14, count: 20 }
+            { text: "community", size: 45, count: 141 },
+            { text: "funding", size: 40, count: 97 },
+            { text: "infrastructure", size: 38, count: 98 },
+            { text: "talent", size: 32, count: 60 },
+            { text: "ethics", size: 28, count: 47 },
+            { text: "startups", size: 26, count: 43 },
+            { text: "research", size: 24, count: 40 },
+            { text: "government", size: 22, count: 32 },
+            { text: "collaboration", size: 20, count: 25 },
+            { text: "innovation", size: 18, count: 20 }
         ];
 
-        // Generic bar chart function
+        // Loading animation
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                initializeAnimations();
+            }, 1000);
+        });
+
+        // Scroll progress indicator
+        window.addEventListener('scroll', function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scrollProgress').style.width = scrolled + '%';
+            
+            // Show/hide FAB
+            const fab = document.getElementById('fabButton');
+            if (winScroll > 300) {
+                fab.classList.add('visible');
+            } else {
+                fab.classList.remove('visible');
+            }
+        });
+
+        // Smooth scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Intersection Observer for fade-in animations
+        function initializeAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Enhanced bar chart function with improved animations
         function createBarChart(containerId, data) {
             const container = document.getElementById(containerId);
             container.innerHTML = "";
@@ -584,32 +1083,46 @@
                 const bar = document.createElement("div");
                 bar.className = "bar";
                 bar.style.width = "0%";
+                bar.style.background = item.color || `linear-gradient(135deg, var(--primary), var(--accent))`;
                 bar.textContent = item.value;
+                
+                // Add hover effect
+                bar.addEventListener('mouseenter', () => {
+                    bar.style.transform = 'scaleY(1.1)';
+                    bar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+                });
+                
+                bar.addEventListener('mouseleave', () => {
+                    bar.style.transform = 'scaleY(1)';
+                    bar.style.boxShadow = 'none';
+                });
                 
                 wrap.appendChild(label);
                 wrap.appendChild(bar);
                 container.appendChild(wrap);
                 
-                // Animate bar width
+                // Staggered animation
                 setTimeout(() => {
                     bar.style.width = ((item.value / maxValue) * 100) + "%";
-                }, 300 + (index * 100));
+                }, 400 + (index * 150));
             });
         }
 
-        // Word cloud creation
+        // Enhanced word cloud with better interactions
         function createWordCloud() {
             const container = d3.select("#wordcloud");
             container.selectAll("*").remove();
             
-            const width = 700;
-            const height = 300;
+            const containerNode = container.node();
+            const rect = containerNode.getBoundingClientRect();
+            const width = Math.min(800, rect.width - 40);
+            const height = 350;
             
             const layout = d3.layout.cloud()
                 .size([width, height])
                 .words(wordData)
-                .padding(8)
-                .rotate(() => (Math.random() - 0.5) * 60)
+                .padding(12)
+                .rotate(() => (Math.random() - 0.5) * 40)
                 .font("Inter")
                 .fontSize(d => d.size)
                 .on("end", draw);
@@ -627,7 +1140,7 @@
                     .attr("transform", `translate(${width/2},${height/2})`);
 
                 const color = d3.scaleOrdinal()
-                    .range(["#2563eb", "#7c3aed", "#dc2626", "#059669", "#ea580c"]);
+                    .range(["#2563eb", "#7c3aed", "#dc2626", "#059669", "#ea580c", "#06b6d4"]);
 
                 g.selectAll("text")
                     .data(words)
@@ -636,44 +1149,109 @@
                     .attr("transform", d => `translate(${d.x},${d.y})rotate(${d.rotate})`)
                     .style("font-size", d => d.size + "px")
                     .style("font-family", "Inter")
-                    .style("font-weight", "600")
+                    .style("font-weight", "700")
                     .style("fill", (d, i) => color(i))
+                    .style("opacity", 0)
                     .text(d => d.text)
                     .style("cursor", "pointer")
-                    .on("mouseover", function(event, d) {
-                        d3.select(this).style("opacity", 0.7);
-                        
-                        // Create tooltip
-                        const tooltip = d3.select("body").append("div")
-                            .attr("class", "tooltip")
-                            .style("position", "absolute")
-                            .style("background", "rgba(0,0,0,0.8)")
-                            .style("color", "#fff")
-                            .style("padding", "8px 12px")
-                            .style("border-radius", "4px")
-                            .style("font-size", "12px")
-                            .style("pointer-events", "none")
-                            .style("z-index", "1000")
-                            .html(`"${d.text}" - ${d.count} mentions`)
-                            .style("left", (event.pageX + 10) + "px")
-                            .style("top", (event.pageY - 10) + "px");
-                    })
-                    .on("mouseout", function(event, d) {
-                        d3.select(this).style("opacity", 1);
-                        d3.select(".tooltip").remove();
+                    .transition()
+                    .duration(1000)
+                    .delay((d, i) => i * 100)
+                    .style("opacity", 1)
+                    .on("end", function() {
+                        d3.select(this)
+                            .on("mouseover", function(event, d) {
+                                d3.select(this)
+                                    .transition()
+                                    .duration(200)
+                                    .style("opacity", 0.7)
+                                    .style("transform", `translate(${d.x},${d.y})rotate(${d.rotate}) scale(1.1)`);
+                                
+                                showTooltip(event, d);
+                            })
+                            .on("mouseout", function(event, d) {
+                                d3.select(this)
+                                    .transition()
+                                    .duration(200)
+                                    .style("opacity", 1)
+                                    .style("transform", `translate(${d.x},${d.y})rotate(${d.rotate}) scale(1)`);
+                                
+                                hideTooltip();
+                            });
                     });
             }
         }
 
-        // Initialize all charts
+        // Tooltip functions
+        function showTooltip(event, d) {
+            const tooltip = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("position", "absolute")
+                .style("background", "rgba(0,0,0,0.9)")
+                .style("color", "#fff")
+                .style("padding", "12px 16px")
+                .style("border-radius", "8px")
+                .style("font-size", "14px")
+                .style("font-weight", "600")
+                .style("pointer-events", "none")
+                .style("z-index", "1000")
+                .style("box-shadow", "0 8px 32px rgba(0,0,0,0.3)")
+                .html(`<strong>"${d.text}"</strong><br/>${d.count} mentions`)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 15) + "px")
+                .style("opacity", 0)
+                .transition()
+                .duration(200)
+                .style("opacity", 1);
+        }
+
+        function hideTooltip() {
+            d3.selectAll(".tooltip")
+                .transition()
+                .duration(200)
+                .style("opacity", 0)
+                .remove();
+        }
+
+        // Highlight section function for stat cards
+        function highlightSection(sectionId) {
+            // Add pulse animation to clicked stat card
+            event.target.closest('.stat-card').classList.add('pulse');
+            setTimeout(() => {
+                event.target.closest('.stat-card').classList.remove('pulse');
+            }, 2000);
+        }
+
+        // Initialize all visualizations when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            createBarChart('inclusion-chart', inclusionData);
-            createBarChart('barriers-chart', barriersData);
-            createBarChart('themes-chart', themesData);
-            createBarChart('projects-chart', projectsData);
-            createBarChart('ethics-chart', ethicsData);
-            createWordCloud();
+            // Delay initialization to allow for loading animation
+            setTimeout(() => {
+                createBarChart('inclusion-chart', inclusionData);
+                createBarChart('barriers-chart', barriersData);
+                createBarChart('themes-chart', themesData);
+                createBarChart('projects-chart', projectsData);
+                createBarChart('ethics-chart', ethicsData);
+                createWordCloud();
+            }, 1200);
         });
+
+        // Resize handler for responsive word cloud
+        window.addEventListener('resize', debounce(() => {
+            createWordCloud();
+        }, 300));
+
+        // Utility function for debouncing
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
     </script>
 </body>
 </html>
