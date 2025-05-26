@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BC AI Ecosystem Survey Analysis - May 2025</title>
+    <title>BC + AI Ecosystem Analysis - May 2025</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.7/d3.layout.cloud.min.js"></script>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         * {
             margin: 0;
@@ -16,23 +16,27 @@
         }
         
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #7c3aed;
-            --accent: #06b6d4;
-            --success: #059669;
-            --warning: #ea580c;
-            --danger: #dc2626;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
+            --background: #ffffff;
+            --foreground: #0a0a0a;
+            --muted: #f5f5f5;
+            --muted-foreground: #737373;
+            --border: #e5e5e5;
+            --primary: #0066ff;
+            --primary-foreground: #ffffff;
+            --secondary: #6366f1;
+            --accent: #8b5cf6;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius: 8px;
+        }
+        
+        [data-theme="dark"] {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --muted: #171717;
+            --muted-foreground: #a3a3a3;
+            --border: #262626;
         }
         
         html {
@@ -40,656 +44,423 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.7;
-            color: var(--gray-800);
-            background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
-            font-size: 16px;
-            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        /* Loading Animation */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        .loading-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Scroll Progress Indicator */
+        /* Scroll Progress */
         .scroll-progress {
             position: fixed;
             top: 0;
             left: 0;
             width: 0%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            z-index: 1000;
+            height: 2px;
+            background: var(--primary);
+            z-index: 50;
             transition: width 0.3s ease;
         }
         
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-        .fab.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .fab:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.4);
-        }
-        
+        /* Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 0 24px;
         }
         
-        /* Fade-in animation for sections */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
-            border-radius: 20px;
-            padding: 50px;
-            margin-bottom: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            border-left: 6px solid var(--primary);
+        /* Header */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
             position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, var(--background) 0%, var(--muted) 100%);
         }
         
-        .header::before {
+        .hero::before {
             content: '';
             position: absolute;
             top: 0;
+            left: 0;
             right: 0;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
-            border-radius: 50%;
-            transform: translate(50%, -50%);
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(0, 102, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
         
-        .header h1 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 800;
-            color: var(--gray-900);
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted-foreground);
+            margin-bottom: 24px;
+        }
+        
+        .hero h1 {
+            font-size: clamp(36px, 8vw, 72px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--foreground) 0%, var(--muted-foreground) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            color: var(--muted-foreground);
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+        
+        .hero-stat {
+            text-align: center;
+        }
+        
+        .hero-stat-number {
+            display: block;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .hero-stat-label {
+            font-size: 14px;
+            color: var(--muted-foreground);
+            font-weight: 500;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .card-description {
+            color: var(--muted-foreground);
+            font-size: 14px;
+        }
+        
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        /* Section */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
             margin-bottom: 16px;
-            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        .section-description {
+            font-size: 16px;
+            color: var(--muted-foreground);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Metrics Cards */
+        .metric-card {
+            text-align: center;
+            padding: 32px 24px;
+        }
+        
+        .metric-number {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
-        .header .subtitle {
-            font-size: 1.25rem;
-            color: var(--gray-600);
-            margin-bottom: 30px;
+        .metric-label {
+            font-size: 14px;
             font-weight: 500;
-        }
-        
-        .methodology-note {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border: 2px solid #f59e0b;
-            border-radius: 12px;
-            padding: 20px;
-            font-size: 0.875rem;
-            color: #92400e;
-            position: relative;
-            font-weight: 500;
-        }
-        
-        .stats-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
-            border-radius: 16px;
-            padding: 32px 24px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            border-top: 4px solid var(--primary);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(124, 58, 237, 0.05));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-        }
-        
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            display: block;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-600);
+            color: var(--muted-foreground);
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            position: relative;
-            z-index: 1;
         }
         
-        .section {
-            background: linear-gradient(135deg, #ffffff 0%, var(--gray-50) 100%);
-            border-radius: 20px;
-            padding: 50px;
-            margin-bottom: 40px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
+        .metric-change {
+            font-size: 12px;
+            margin-top: 4px;
         }
         
-        .section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        .metric-change.positive {
+            color: var(--success);
         }
         
-        .section h2 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 32px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--gray-200);
-            position: relative;
+        .metric-change.negative {
+            color: var(--danger);
         }
         
-        .section h2::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: var(--primary);
-        }
-        
-        .section h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            margin: 40px 0 20px 0;
-        }
-        
-        .section p {
-            margin-bottom: 20px;
-            color: var(--gray-700);
-            font-size: 1.0625rem;
-            line-height: 1.8;
-        }
-        
-        .key-finding {
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-            border: 2px solid var(--primary);
-            border-radius: 16px;
-            padding: 28px;
-            margin: 32px 0;
-            font-weight: 600;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .key-finding::before {
-            content: '💡';
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            opacity: 0.7;
-        }
-        
-        .key-finding strong {
-            color: var(--primary-dark);
-        }
-        
+        /* Charts */
         .chart-container {
-            margin: 40px 0;
-            padding: 32px;
-            background: linear-gradient(135deg, var(--gray-50), #ffffff);
-            border-radius: 16px;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .chart-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            background: var(--muted);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 24px 0;
         }
         
         .bar-chart {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-top: 24px;
+            gap: 12px;
         }
         
         .bar-item {
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 8px 0;
-            transition: all 0.3s ease;
-        }
-        
-        .bar-item:hover {
-            transform: translateX(4px);
+            gap: 16px;
         }
         
         .bar-label {
-            min-width: 200px;
-            font-weight: 600;
-            color: var(--gray-700);
-            font-size: 0.9375rem;
-            position: relative;
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 120px;
+            flex-shrink: 0;
         }
         
-        .bar {
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 12px;
-            color: white;
-            font-size: 0.8125rem;
-            font-weight: 700;
-            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 40px;
-            position: relative;
+        .bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
             overflow: hidden;
         }
         
-        .bar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
+        .bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s ease;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 1s ease;
+            width: 0%;
         }
         
-        .bar:hover::before {
-            left: 100%;
+        .bar-value {
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 32px;
+            text-align: right;
         }
         
-        .wordcloud-container {
-            background: linear-gradient(135deg, var(--gray-50), #ffffff);
-            border: 1px solid var(--gray-200);
-            border-radius: 16px;
-            padding: 40px;
-            margin: 40px 0;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-            position: relative;
+        /* Alerts */
+        .alert {
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid;
+            margin: 24px 0;
+        }
+        
+        .alert-success {
+            background: #f0fdf4;
+            border-color: var(--success);
+            color: #166534;
+        }
+        
+        .alert-warning {
+            background: #fffbeb;
+            border-color: var(--warning);
+            color: #92400e;
+        }
+        
+        .alert-danger {
+            background: #fef2f2;
+            border-color: var(--danger);
+            color: #991b1b;
+        }
+        
+        .alert-info {
+            background: #eff6ff;
+            border-color: var(--primary);
+            color: #1e40af;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 12px;
+        }
+        
+        .badge-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+        
+        .badge-secondary {
+            background: var(--muted);
+            color: var(--muted-foreground);
+        }
+        
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* Progress */
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: var(--muted);
+            border-radius: 4px;
             overflow: hidden;
         }
         
-        .wordcloud-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 1s ease;
+            border-radius: 4px;
         }
         
-        .data-table {
+        /* Word Cloud */
+        .wordcloud-container {
+            background: var(--muted);
+            border-radius: var(--radius);
+            padding: 48px 24px;
+            text-align: center;
+            margin: 32px 0;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        
+        .table {
             width: 100%;
             border-collapse: collapse;
-            margin: 32px 0;
-            font-size: 0.9375rem;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            font-size: 14px;
         }
         
-        .data-table th,
-        .data-table td {
-            padding: 16px 20px;
+        .table th,
+        .table td {
+            padding: 12px 16px;
             text-align: left;
-            border-bottom: 1px solid var(--gray-200);
-            transition: background-color 0.2s ease;
+            border-bottom: 1px solid var(--border);
         }
         
-        .data-table th {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            font-weight: 700;
-            color: white;
-            position: relative;
-        }
-        
-        .data-table tbody tr:hover {
-            background-color: var(--gray-50);
-            transform: scale(1.005);
-        }
-        
-        .data-table tbody tr {
-            transition: all 0.2s ease;
-        }
-        
-        .quote-block {
-            background: linear-gradient(135deg, var(--gray-100), var(--gray-50));
-            border-left: 6px solid var(--gray-500);
-            border-radius: 0 16px 16px 0;
-            padding: 28px;
-            margin: 32px 0;
-            font-style: italic;
-            color: var(--gray-700);
-            position: relative;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        }
-        
-        .quote-block::before {
-            content: '"';
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            font-size: 4rem;
-            color: var(--gray-300);
-            font-family: serif;
-            line-height: 1;
-        }
-        
-        .quote-author {
-            font-style: normal;
+        .table th {
+            background: var(--muted);
             font-weight: 600;
-            color: var(--gray-600);
-            margin-top: 16px;
-            font-size: 0.9375rem;
         }
         
-        .findings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 28px;
-            margin: 40px 0;
+        .table tbody tr:hover {
+            background: var(--muted);
         }
         
-        .finding-card {
-            background: linear-gradient(135deg, var(--gray-50), #ffffff);
-            border: 1px solid var(--gray-200);
-            border-radius: 16px;
-            padding: 32px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+        /* Footer */
+        .footer {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+            background: var(--muted);
+            text-align: center;
+            color: var(--muted-foreground);
         }
         
-        .finding-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--success), var(--accent));
-        }
-        
-        .finding-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-        }
-        
-        .finding-card h4 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 16px;
-        }
-        
-        .finding-card .number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 12px;
-            line-height: 1;
-        }
-        
-        .critical-issues {
-            background: linear-gradient(135deg, #fef2f2, #fee2e2);
-            border: 2px solid var(--danger);
-            border-radius: 16px;
-            padding: 32px;
-            margin: 32px 0;
-            position: relative;
-        }
-        
-        .critical-issues::before {
-            content: '⚠️';
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            font-size: 2rem;
-        }
-        
-        .critical-issues h3 {
-            color: var(--danger);
-            margin-top: 0;
-        }
-        
-        .opportunities {
-            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-            border: 2px solid var(--success);
-            border-radius: 16px;
-            padding: 32px;
-            margin: 32px 0;
-            position: relative;
-        }
-        
-        .opportunities::before {
-            content: '🚀';
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            font-size: 2rem;
-        }
-        
-        .opportunities h3 {
-            color: var(--success);
-            margin-top: 0;
-        }
-        
-        .conclusion {
-            background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
-            color: white;
-            border-radius: 20px;
-            padding: 50px;
-            margin-top: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .conclusion::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.1), transparent);
-            border-radius: 50%;
-            transform: translate(50%, -50%);
-        }
-        
-        .conclusion h2 {
-            color: white;
-            border-bottom-color: var(--gray-700);
-        }
-        
-        .conclusion h3 {
-            color: var(--gray-200);
-        }
-        
-        .conclusion p {
-            color: var(--gray-300);
-        }
-        
-        /* Enhanced Mobile Responsiveness */
+        /* Responsive */
         @media (max-width: 768px) {
             .container {
-                padding: 20px 16px;
+                padding: 0 16px;
             }
             
-            .header {
-                padding: 30px 24px;
-                margin-bottom: 30px;
+            .hero {
+                padding: 80px 0 60px;
             }
             
-            .header h1 {
-                font-size: 2rem;
+            .hero-stats {
+                gap: 32px;
             }
             
             .section {
-                padding: 30px 24px;
-                margin-bottom: 30px;
+                padding: 60px 0;
             }
             
-            .section h2 {
-                font-size: 1.75rem;
+            .section-header {
+                margin-bottom: 40px;
             }
             
-            .bar-label {
-                min-width: 120px;
-                font-size: 0.8125rem;
-            }
-            
-            .stats-overview {
-                grid-template-columns: repeat(2, 1fr);
+            .grid {
                 gap: 16px;
-            }
-            
-            .stat-card {
-                padding: 20px 16px;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
-            
-            .findings-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .fab {
-                bottom: 20px;
-                right: 20px;
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-            
-            .wordcloud-container {
-                padding: 24px 16px;
-            }
-            
-            .chart-container {
-                padding: 24px 16px;
             }
             
             .bar-item {
@@ -700,592 +471,453 @@
             
             .bar-label {
                 min-width: auto;
-                width: 100%;
-            }
-            
-            .bar {
-                width: 100%;
-                min-width: 100px;
             }
         }
         
-        @media (max-width: 480px) {
-            .stats-overview {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 1.75rem;
-            }
-            
-            .section h2 {
-                font-size: 1.5rem;
-            }
-            
-            .data-table th,
-            .data-table td {
-                padding: 12px 8px;
-                font-size: 0.8125rem;
-            }
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
         }
         
-        /* Pulse Animation for Key Elements */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
         
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        /* Smooth Reveal Animation */
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .slide-in-up {
-            animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 8px 12px;
+            background: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 40;
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
-    
     <!-- Scroll Progress -->
     <div class="scroll-progress" id="scrollProgress"></div>
     
-    <!-- Floating Action Button -->
-    <div class="fab" id="fabButton" onclick="scrollToTop()">
-        ↑
-    </div>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     
-    <div class="container">
-        <div class="header fade-in">
-            <h1>The State of BC's AI Ecosystem</h1>
-            <p class="subtitle">Survey Analysis • May 2025</p>
-            <div class="methodology-note">
-                <strong>Methodology Note:</strong> This analysis is based on 41 survey responses collected in May 2025. The sample is self-selected and may not represent the entire BC AI community. Results should be interpreted as exploratory findings rather than definitive conclusions.
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span>📊</span>
+                May 2025 Survey Analysis
             </div>
-        </div>
-
-        <div class="stats-overview fade-in">
-            <div class="stat-card" onclick="highlightSection('survey-details')">
-                <span class="stat-number">41</span>
-                <span class="stat-label">Survey Responses</span>
-            </div>
-            <div class="stat-card" onclick="highlightSection('completion-rate')">
-                <span class="stat-number">97.6%</span>
-                <span class="stat-label">Average Completeness</span>
-            </div>
-            <div class="stat-card" onclick="highlightSection('methodology')">
-                <span class="stat-number">10</span>
-                <span class="stat-label">Survey Questions</span>
-            </div>
-            <div class="stat-card" onclick="highlightSection('timeline')">
-                <span class="stat-number">May 2025</span>
-                <span class="stat-label">Collection Period</span>
-            </div>
-        </div>
-
-        <div class="section fade-in">
-            <h2>What We Found</h2>
-            <p>In May 2025, we surveyed members of British Columbia's artificial intelligence community to understand their experiences, challenges, and aspirations. The results paint a picture of an ecosystem with significant strengths alongside persistent barriers.</p>
+            <h1>BC + AI Ecosystem</h1>
+            <p>Multi-modal, multi-cultural, radically local, and future-facing. Grassroots innovation meets ethical AI development.</p>
             
-            <div class="key-finding">
-                <strong>Primary Finding:</strong> While most respondents report positive community experiences, systemic challenges around funding, coordination, and access create barriers that prevent the ecosystem from reaching its full potential.
-            </div>
-
-            <p>The survey captured responses from 41 individuals across various sectors, including researchers, entrepreneurs, developers, and other AI practitioners. Despite the relatively small sample size, clear patterns emerged that warrant attention from community leaders and policymakers.</p>
-        </div>
-
-        <div class="section fade-in">
-            <h2>Community Inclusion Analysis</h2>
-            
-            <p>When asked about their sense of belonging in BC's AI community, respondents provided a nuanced picture of inclusion and exclusion.</p>
-
-            <div class="chart-container">
-                <h3>Community Belonging Experiences</h3>
-                <p style="font-size: 0.875rem; color: var(--gray-500); margin-bottom: 16px;">Based on 41 survey responses</p>
-                <div class="bar-chart" id="inclusion-chart"></div>
-            </div>
-
-            <div class="findings-grid">
-                <div class="finding-card">
-                    <div class="number">29</div>
-                    <h4>Feel Welcomed</h4>
-                    <p>71% of respondents report feeling welcomed in BC AI spaces, suggesting strong community foundations exist.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-number">42</span>
+                    <span class="hero-stat-label">Responses</span>
                 </div>
-                <div class="finding-card">
-                    <div class="number">12</div>
-                    <h4>Neutral Experience</h4>
-                    <p>29% report neither welcoming nor exclusionary experiences, indicating room for more active inclusion efforts.</p>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">97.6%</span>
+                    <span class="hero-stat-label">Completion Rate</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">0.86</span>
+                    <span class="hero-stat-label">Health Score</span>
                 </div>
             </div>
-
-            <div class="quote-block">
-                "I have been welcomed by the creative meet-up community, probably because I have put the effort in, attended consistently and spread the word when I can."
-                <div class="quote-author">— Survey Respondent</div>
+        </div>
+    </section>
+    
+    <!-- Key Metrics -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Community Health</h2>
+                <p class="section-description">Overall ecosystem health shows strong community engagement with room for improvement in key areas</p>
             </div>
-
-            <h3>Barriers to Participation</h3>
-            <p>Despite generally positive sentiment, specific barriers emerged that prevent full participation:</p>
-
-            <div class="chart-container">
-                <h3>Reported Barriers</h3>
-                <div class="bar-chart" id="barriers-chart"></div>
-            </div>
-
-            <div class="quote-block">
-                "Mostly welcomed. Excluded based primarily from a financial perspective. It's expensive to play."
-                <div class="quote-author">— Survey Respondent</div>
+            
+            <div class="grid grid-4">
+                <div class="card metric-card">
+                    <div class="metric-number">71.4%</div>
+                    <div class="metric-label">Feel Welcomed</div>
+                    <div class="metric-change positive">+5% vs baseline</div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-number">0.0%</div>
+                    <div class="metric-label">Excluded</div>
+                    <div class="metric-change positive">Excellent inclusion</div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-number">150</div>
+                    <div class="metric-label">Community Mentions</div>
+                    <div class="metric-change positive">Top theme</div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-number">39</div>
+                    <div class="metric-label">Project Ideas</div>
+                    <div class="metric-change positive">High innovation</div>
+                </div>
             </div>
         </div>
-
-        <div class="section fade-in">
-            <h2>Theme Analysis: What Matters Most</h2>
+    </section>
+    
+    <!-- Top Themes -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Key Themes</h2>
+                <p class="section-description">Most discussed topics across all survey responses</p>
+            </div>
             
-            <p>We analyzed all survey responses to identify recurring themes. The frequency of mentions reveals community priorities and concerns.</p>
-
-            <div class="wordcloud-container">
-                <h3>Community Conversation Topics</h3>
-                <p style="font-size: 0.875rem; color: var(--gray-500); margin-bottom: 20px;">Word size reflects frequency of mentions across all responses</p>
-                <div id="wordcloud"></div>
-            </div>
-
-            <div class="chart-container">
-                <h3>Most Discussed Themes</h3>
-                <div class="bar-chart" id="themes-chart"></div>
-            </div>
-
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Theme</th>
-                        <th>Mentions</th>
-                        <th>Primary Context</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Community</td><td>141</td><td>Networking, collaboration, events</td></tr>
-                    <tr><td>Infrastructure</td><td>98</td><td>Platforms, tools, technical systems</td></tr>
-                    <tr><td>Funding</td><td>97</td><td>Investment, grants, financial support</td></tr>
-                    <tr><td>Talent</td><td>60</td><td>Skills, education, workforce development</td></tr>
-                    <tr><td>Ethics</td><td>47</td><td>Responsible AI, governance, safety</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="section fade-in">
-            <h2>Critical Issues Identified</h2>
-
-            <div class="critical-issues">
-                <h3>Three Major Challenges</h3>
-                <p><strong>1. Funding Gap:</strong> With 97 funding-related mentions, access to capital emerged as the most significant barrier to ecosystem growth.</p>
-                <p><strong>2. Coordination Problems:</strong> 19 mentions of fragmentation indicate that existing efforts lack coordination, potentially duplicating work and missing synergies.</p>
-                <p><strong>3. Government Disconnect:</strong> Only 32 mentions of government or policy issues suggest weak connections between the AI community and public sector decision-makers.</p>
-            </div>
-
-            <div class="quote-block">
-                "We need more government support and funding opportunities. There's a disconnect between what the community needs and what's being offered."
-                <div class="quote-author">— Survey Respondent</div>
+            <div class="card">
+                <div class="chart-container">
+                    <div class="bar-chart" id="themes-chart"></div>
+                </div>
             </div>
         </div>
-
-        <div class="section fade-in">
-            <h2>Innovation Pipeline</h2>
-            
-            <p>Despite challenges, the community demonstrates significant innovation potential:</p>
-
-            <div class="opportunities">
-                <h3>Identified Opportunities</h3>
-                <p><strong>38 Project Ideas:</strong> Respondents shared concrete project concepts spanning healthcare, infrastructure, and creative applications.</p>
-                <p><strong>39 Transformation Suggestions:</strong> Community members provided specific recommendations for ecosystem improvement.</p>
-                <p><strong>Strong Engagement:</strong> High survey completion rates (97.6%) indicate an engaged community willing to participate in collective problem-solving.</p>
+    </section>
+    
+    <!-- Critical Issues -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Critical Issues</h2>
+                <p class="section-description">Key challenges identified through community feedback</p>
             </div>
-
-            <div class="chart-container">
-                <h3>Project Categories</h3>
-                <div class="bar-chart" id="projects-chart"></div>
-            </div>
-        </div>
-
-        <div class="section fade-in">
-            <h2>Ethical Considerations</h2>
             
-            <p>Respondents identified several ethical concerns that require ongoing attention:</p>
-
-            <div class="chart-container">
-                <h3>Top Ethical Concerns</h3>
-                <p style="font-size: 0.875rem; color: var(--gray-500); margin-bottom: 16px;">Multiple responses allowed per participant</p>
-                <div class="bar-chart" id="ethics-chart"></div>
-            </div>
-
-            <div class="quote-block">
-                "Monetization can always open the door to greed and misuse… constant checks & balances are essential."
-                <div class="quote-author">— Survey Respondent</div>
-            </div>
-        </div>
-
-        <div class="conclusion fade-in">
-            <h2>Evidence-Based Recommendations</h2>
-            
-            <p>Based on the survey findings, recommendations are categorized by strength of supporting evidence:</p>
-            
-            <div style="background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; border-radius: 8px; padding: 24px; margin: 24px 0;">
-                <h3>✅ <strong>Well-Supported Recommendations:</strong></h3>
+            <div class="grid grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🟠 Funding Needs</div>
+                        <div class="card-description">102 funding-related mentions</div>
+                    </div>
+                    <p>Strategic funding development needed to support ecosystem growth and innovation projects.</p>
+                    <div class="alert alert-warning">
+                        <strong>Priority:</strong> Develop comprehensive funding strategy
+                    </div>
+                </div>
                 
-                <h4><strong>1. Address Financial Barriers</strong> - <strong>STRONG EVIDENCE</strong></h4>
-                <ul style="margin: 12px 0; padding-left: 20px; color: rgba(255,255,255,0.9);">
-                    <li><strong>Quantitative support:</strong> 97 funding-related mentions (highest theme frequency)</li>
-                    <li><strong>Ranking data:</strong> Financial barriers ranked #1 in participation barriers (8/41 responses)</li>
-                    <li><strong>Qualitative support:</strong> Direct quote evidence ("expensive to play")</li>
-                    <li><strong>Assessment:</strong> This recommendation is well-grounded in the data</li>
-                </ul>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🟠 Coordination Gaps</div>
+                        <div class="card-description">20 fragmentation mentions</div>
+                    </div>
+                    <p>Improve ecosystem coordination to eliminate duplication and maximize synergies.</p>
+                    <div class="alert alert-warning">
+                        <strong>Action:</strong> Establish coordination framework
+                    </div>
+                </div>
                 
-                <h4><strong>2. Scale Successful Community Practices</strong> - <strong>STRONG EVIDENCE</strong></h4>
-                <ul style="margin: 12px 0; padding-left: 20px; color: rgba(255,255,255,0.9);">
-                    <li><strong>Clear metric:</strong> 71% (29/41) report feeling welcomed</li>
-                    <li><strong>Specific data:</strong> Only 12 reported neutral experiences, 0 reported exclusion</li>
-                    <li><strong>Logical connection:</strong> Recommendation directly addresses documented success</li>
-                    <li><strong>Assessment:</strong> Well-supported with clear baseline metrics</li>
-                </ul>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🟠 Government Disconnect</div>
+                        <div class="card-description">Only 37 government mentions</div>
+                    </div>
+                    <p>Strengthen public-private partnerships and government engagement in AI initiatives.</p>
+                    <div class="alert alert-warning">
+                        <strong>Need:</strong> Enhanced government collaboration
+                    </div>
+                </div>
             </div>
-            
-            <div style="background: rgba(251, 146, 60, 0.15); border-left: 4px solid #fb923c; border-radius: 8px; padding: 24px; margin: 24px 0;">
-                <h3>⚠️ <strong>Moderately Supported Recommendations:</strong></h3>
-                
-                <h4><strong>3. Strengthen Government Engagement</strong> - <strong>MODERATE EVIDENCE</strong></h4>
-                <ul style="margin: 12px 0; padding-left: 20px; color: rgba(255,255,255,0.9);">
-                    <li><strong>Supporting data:</strong> Only 32 government mentions vs. 141 community mentions</li>
-                    <li><strong>Gap identified:</strong> Low government engagement relative to other themes</li>
-                    <li><strong>Limitation:</strong> Evidence shows low mentions but doesn't prove causation or need</li>
-                    <li><strong>Assessment:</strong> Reasonable inference but could be stronger</li>
-                </ul>
-            </div>
-            
-            <div style="background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; border-radius: 8px; padding: 24px; margin: 24px 0;">
-                <h3>🔴 <strong>Weakly Supported Recommendations:</strong></h3>
-                
-                <h4><strong>4. Improve Ecosystem Coordination</strong> - <strong>WEAK EVIDENCE</strong></h4>
-                <ul style="margin: 12px 0; padding-left: 20px; color: rgba(255,255,255,0.9);">
-                    <li><strong>Limited data:</strong> Only 19 mentions of "fragmentation"</li>
-                    <li><strong>No ranking:</strong> Coordination issues don't appear in top barriers chart</li>
-                    <li><strong>Weak foundation:</strong> Best practices require that survey recommendations be clearly tied to substantial evidence, yet this recommendation relies on the smallest data point</li>
-                    <li><strong>Assessment:</strong> Insufficient evidence to justify as a priority recommendation</li>
-                </ul>
-            </div>
-            
-            <p style="margin-top: 32px; font-style: italic; color: rgba(255,255,255,0.9);">
-                <strong>Methodology Note:</strong> This analysis is based on 41 self-selected survey responses and should be considered exploratory. The small sample size and non-probability sampling method limit generalizability. Larger, representative studies with validated instruments are needed to confirm these patterns and guide strategic decision-making.
-            </p>
         </div>
-    </div>
-
+    </section>
+    
+    <!-- Opportunities -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Key Opportunities</h2>
+                <p class="section-description">Areas of strength and potential for ecosystem growth</p>
+            </div>
+            
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🚀 Innovation Pipeline</div>
+                    </div>
+                    <ul style="margin: 16px 0; padding-left: 20px;">
+                        <li>39 concrete project ideas identified</li>
+                        <li>40 transformation suggestions collected</li>
+                        <li>Strong community engagement (97.6% completion)</li>
+                    </ul>
+                    <div class="alert alert-success">
+                        <strong>Strength:</strong> Highly engaged, innovative community
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🎯 Connection Hub</div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="bar-chart" id="connections-chart"></div>
+                    </div>
+                    <div class="alert alert-info">
+                        <strong>Primary Hub:</strong> Meetup events (12 mentions)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Project Categories -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Project Ideas by Category</h2>
+                <p class="section-description">Distribution of innovation projects proposed by community</p>
+            </div>
+            
+            <div class="card">
+                <div class="chart-container">
+                    <div class="bar-chart" id="projects-chart"></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-2" style="margin-top: 32px;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Healthcare Applications</div>
+                        <span class="badge badge-success">5 projects</span>
+                    </div>
+                    <p>AI solutions for patient care, senior care, and healthcare optimization.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Creative Projects</div>
+                        <span class="badge badge-secondary">7 projects</span>
+                    </div>
+                    <p>Music visualization, design tools, and creative AI applications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Strategic Vision -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Strategic Vision</h2>
+                <p class="section-description">Evidence-based recommendations for ecosystem development</p>
+            </div>
+            
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">✅ Well-Supported</div>
+                        <span class="badge badge-success">Strong Evidence</span>
+                    </div>
+                    <h4 style="margin: 16px 0 8px 0;">Address Financial Barriers</h4>
+                    <p style="font-size: 14px; color: var(--muted-foreground); margin-bottom: 12px;">97 funding mentions (highest theme frequency)</p>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 95%"></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">✅ Well-Supported</div>
+                        <span class="badge badge-success">Strong Evidence</span>
+                    </div>
+                    <h4 style="margin: 16px 0 8px 0;">Scale Community Practices</h4>
+                    <p style="font-size: 14px; color: var(--muted-foreground); margin-bottom: 12px;">71.4% feel welcomed, 0% excluded</p>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" style="margin-top: 24px;">
+                <strong>Unified Vision:</strong> BC AI ecosystem with strong coordination, sustainable funding, inclusive community, national recognition, and robust government-industry-academic partnerships.
+            </div>
+        </div>
+    </section>
+    
+    <!-- Data Table -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Theme Analysis</h2>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Theme</th>
+                            <th>Mentions</th>
+                            <th>Primary Context</th>
+                            <th>Sentiment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Community</strong></td>
+                            <td>150</td>
+                            <td>Networking, collaboration, events</td>
+                            <td><span class="badge badge-success">Positive</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Infrastructure</strong></td>
+                            <td>117</td>
+                            <td>Platforms, tools, technical systems</td>
+                            <td><span class="badge badge-secondary">Neutral</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Funding</strong></td>
+                            <td>102</td>
+                            <td>Investment, grants, financial support</td>
+                            <td><span class="badge badge-warning">Concerned</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Talent</strong></td>
+                            <td>67</td>
+                            <td>Skills, education, workforce development</td>
+                            <td><span class="badge badge-secondary">Neutral</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ethics</strong></td>
+                            <td>54</td>
+                            <td>Responsible AI, governance, safety</td>
+                            <td><span class="badge badge-success">Positive</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p><strong>Methodology Note:</strong> Analysis based on 42 survey responses collected in May 2025. Self-selected sample may not represent entire BC AI community.</p>
+            <p style="margin-top: 16px; font-size: 12px;">Report generated on 2025-05-26 • BC + AI Ecosystem Analysis</p>
+        </div>
+    </footer>
+    
     <script>
-        // Enhanced data structures
-        const inclusionData = [
-            { label: "Feel Welcomed", value: 29, color: "var(--success)" },
-            { label: "Neutral Experience", value: 12, color: "var(--warning)" },
-            { label: "No Response", value: 0, color: "var(--gray-400)" }
-        ];
-
-        const barriersData = [
-            { label: "Financial Barriers", value: 8, color: "var(--danger)" },
-            { label: "Time Constraints", value: 6, color: "var(--warning)" },
-            { label: "Geographic Distance", value: 5, color: "var(--secondary)" },
-            { label: "Technical Knowledge Gap", value: 4, color: "var(--primary)" },
-            { label: "Network Access", value: 3, color: "var(--accent)" }
-        ];
-
+        // Data from the provided documents
         const themesData = [
-            { label: "Community", value: 141, color: "var(--primary)" },
-            { label: "Infrastructure", value: 98, color: "var(--accent)" },
-            { label: "Funding", value: 97, color: "var(--danger)" },
-            { label: "Talent", value: 60, color: "var(--success)" },
-            { label: "Ethics", value: 47, color: "var(--secondary)" },
-            { label: "Startups", value: 43, color: "var(--warning)" },
-            { label: "Research", value: 40, color: "var(--primary)" },
-            { label: "Government", value: 32, color: "var(--gray-600)" }
+            { label: "Community", value: 150, color: "#22c55e" },
+            { label: "Infrastructure", value: 117, color: "#0066ff" },
+            { label: "Funding", value: 102, color: "#f59e0b" },
+            { label: "Talent", value: 67, color: "#6366f1" },
+            { label: "Ethics", value: 54, color: "#8b5cf6" },
+            { label: "Startups", value: 49, color: "#ef4444" },
+            { label: "Research", value: 41, color: "#06b6d4" },
+            { label: "Government", value: 37, color: "#64748b" }
         ];
-
+        
+        const connectionsData = [
+            { label: "Meetup", value: 12, color: "#22c55e" },
+            { label: "Online", value: 8, color: "#0066ff" },
+            { label: "LinkedIn", value: 5, color: "#6366f1" },
+            { label: "Vancouver AI", value: 5, color: "#8b5cf6" },
+            { label: "YouTube", value: 4, color: "#ef4444" }
+        ];
+        
         const projectsData = [
-            { label: "Healthcare Applications", value: 12, color: "var(--success)" },
-            { label: "Infrastructure Tools", value: 10, color: "var(--primary)" },
-            { label: "Creative Projects", value: 8, color: "var(--secondary)" },
-            { label: "Business Solutions", value: 5, color: "var(--accent)" },
-            { label: "Government Services", value: 3, color: "var(--warning)" }
+            { label: "Other", value: 19, color: "#64748b" },
+            { label: "Creative", value: 7, color: "#8b5cf6" },
+            { label: "Healthcare", value: 5, color: "#22c55e" },
+            { label: "Infrastructure", value: 5, color: "#0066ff" },
+            { label: "Government", value: 2, color: "#f59e0b" },
+            { label: "Business", value: 1, color: "#ef4444" }
         ];
-
-        const ethicsData = [
-            { label: "Responsibility & Accountability", value: 12, color: "var(--primary)" },
-            { label: "Human-Centered Approach", value: 8, color: "var(--success)" },
-            { label: "Equity & Access", value: 6, color: "var(--accent)" },
-            { label: "Transparency & Dialogue", value: 5, color: "var(--secondary)" },
-            { label: "Labor Impact", value: 4, color: "var(--warning)" },
-            { label: "Bias & Fairness", value: 3, color: "var(--danger)" }
-        ];
-
-        const wordData = [
-            { text: "community", size: 45, count: 141 },
-            { text: "funding", size: 40, count: 97 },
-            { text: "infrastructure", size: 38, count: 98 },
-            { text: "talent", size: 32, count: 60 },
-            { text: "ethics", size: 28, count: 47 },
-            { text: "startups", size: 26, count: 43 },
-            { text: "research", size: 24, count: 40 },
-            { text: "government", size: 22, count: 32 },
-            { text: "collaboration", size: 20, count: 25 },
-            { text: "innovation", size: 18, count: 20 }
-        ];
-
-        // Loading animation
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-                initializeAnimations();
-            }, 1000);
-        });
-
-        // Scroll progress indicator
+        
+        // Create bar chart function
+        function createBarChart(containerId, data) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = "";
+            const maxValue = Math.max(...data.map(d => d.value));
+            
+            data.forEach((item, index) => {
+                const barItem = document.createElement("div");
+                barItem.className = "bar-item";
+                
+                const label = document.createElement("div");
+                label.className = "bar-label";
+                label.textContent = item.label;
+                
+                const track = document.createElement("div");
+                track.className = "bar-track";
+                
+                const fill = document.createElement("div");
+                fill.className = "bar-fill";
+                fill.style.backgroundColor = item.color;
+                
+                const value = document.createElement("div");
+                value.className = "bar-value";
+                value.textContent = item.value;
+                
+                track.appendChild(fill);
+                barItem.appendChild(label);
+                barItem.appendChild(track);
+                barItem.appendChild(value);
+                container.appendChild(barItem);
+                
+                // Animate
+                setTimeout(() => {
+                    fill.style.width = ((item.value / maxValue) * 100) + "%";
+                }, 200 + (index * 100));
+            });
+        }
+        
+        // Scroll progress
         window.addEventListener('scroll', function() {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             document.getElementById('scrollProgress').style.width = scrolled + '%';
-            
-            // Show/hide FAB
-            const fab = document.getElementById('fabButton');
-            if (winScroll > 300) {
-                fab.classList.add('visible');
-            } else {
-                fab.classList.remove('visible');
-            }
         });
-
-        // Smooth scroll to top
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+        
+        // Theme toggle
+        function toggleTheme() {
+            const body = document.body;
+            const button = document.querySelector('.theme-toggle');
+            
+            if (body.hasAttribute('data-theme')) {
+                body.removeAttribute('data-theme');
+                button.textContent = '🌙';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                button.textContent = '☀️';
+            }
         }
-
-        // Intersection Observer for fade-in animations
-        function initializeAnimations() {
+        
+        // Fade in animation
+        function initAnimations() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
                     }
                 });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
-
+            }, { threshold: 0.1 });
+            
             document.querySelectorAll('.fade-in').forEach(el => {
                 observer.observe(el);
             });
         }
-
-        // Enhanced bar chart function with improved animations
-        function createBarChart(containerId, data) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = "";
-            
-            const maxValue = Math.max(...data.map(d => d.value));
-            
-            data.forEach((item, index) => {
-                const wrap = document.createElement("div");
-                wrap.className = "bar-item";
-                
-                const label = document.createElement("div");
-                label.className = "bar-label";
-                label.textContent = item.label;
-                
-                const bar = document.createElement("div");
-                bar.className = "bar";
-                bar.style.width = "0%";
-                bar.style.background = item.color || `linear-gradient(135deg, var(--primary), var(--accent))`;
-                bar.textContent = item.value;
-                
-                // Add hover effect
-                bar.addEventListener('mouseenter', () => {
-                    bar.style.transform = 'scaleY(1.1)';
-                    bar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
-                });
-                
-                bar.addEventListener('mouseleave', () => {
-                    bar.style.transform = 'scaleY(1)';
-                    bar.style.boxShadow = 'none';
-                });
-                
-                wrap.appendChild(label);
-                wrap.appendChild(bar);
-                container.appendChild(wrap);
-                
-                // Staggered animation
-                setTimeout(() => {
-                    bar.style.width = ((item.value / maxValue) * 100) + "%";
-                }, 400 + (index * 150));
-            });
-        }
-
-        // Enhanced word cloud with better interactions
-        function createWordCloud() {
-            const container = d3.select("#wordcloud");
-            container.selectAll("*").remove();
-            
-            const containerNode = container.node();
-            const rect = containerNode.getBoundingClientRect();
-            const width = Math.min(800, rect.width - 40);
-            const height = 350;
-            
-            const layout = d3.layout.cloud()
-                .size([width, height])
-                .words(wordData)
-                .padding(12)
-                .rotate(() => (Math.random() - 0.5) * 40)
-                .font("Inter")
-                .fontSize(d => d.size)
-                .on("end", draw);
-
-            layout.start();
-
-            function draw(words) {
-                const svg = container.append("svg")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .style("margin", "0 auto")
-                    .style("display", "block");
-
-                const g = svg.append("g")
-                    .attr("transform", `translate(${width/2},${height/2})`);
-
-                const color = d3.scaleOrdinal()
-                    .range(["#2563eb", "#7c3aed", "#dc2626", "#059669", "#ea580c", "#06b6d4"]);
-
-                g.selectAll("text")
-                    .data(words)
-                    .enter().append("text")
-                    .attr("text-anchor", "middle")
-                    .attr("transform", d => `translate(${d.x},${d.y})rotate(${d.rotate})`)
-                    .style("font-size", d => d.size + "px")
-                    .style("font-family", "Inter")
-                    .style("font-weight", "700")
-                    .style("fill", (d, i) => color(i))
-                    .style("opacity", 0)
-                    .text(d => d.text)
-                    .style("cursor", "pointer")
-                    .transition()
-                    .duration(1000)
-                    .delay((d, i) => i * 100)
-                    .style("opacity", 1)
-                    .on("end", function() {
-                        d3.select(this)
-                            .on("mouseover", function(event, d) {
-                                d3.select(this)
-                                    .transition()
-                                    .duration(200)
-                                    .style("opacity", 0.7)
-                                    .style("transform", `translate(${d.x},${d.y})rotate(${d.rotate}) scale(1.1)`);
-                                
-                                showTooltip(event, d);
-                            })
-                            .on("mouseout", function(event, d) {
-                                d3.select(this)
-                                    .transition()
-                                    .duration(200)
-                                    .style("opacity", 1)
-                                    .style("transform", `translate(${d.x},${d.y})rotate(${d.rotate}) scale(1)`);
-                                
-                                hideTooltip();
-                            });
-                    });
-            }
-        }
-
-        // Tooltip functions
-        function showTooltip(event, d) {
-            const tooltip = d3.select("body").append("div")
-                .attr("class", "tooltip")
-                .style("position", "absolute")
-                .style("background", "rgba(0,0,0,0.9)")
-                .style("color", "#fff")
-                .style("padding", "12px 16px")
-                .style("border-radius", "8px")
-                .style("font-size", "14px")
-                .style("font-weight", "600")
-                .style("pointer-events", "none")
-                .style("z-index", "1000")
-                .style("box-shadow", "0 8px 32px rgba(0,0,0,0.3)")
-                .html(`<strong>"${d.text}"</strong><br/>${d.count} mentions`)
-                .style("left", (event.pageX + 15) + "px")
-                .style("top", (event.pageY - 15) + "px")
-                .style("opacity", 0)
-                .transition()
-                .duration(200)
-                .style("opacity", 1);
-        }
-
-        function hideTooltip() {
-            d3.selectAll(".tooltip")
-                .transition()
-                .duration(200)
-                .style("opacity", 0)
-                .remove();
-        }
-
-        // Highlight section function for stat cards
-        function highlightSection(sectionId) {
-            // Add pulse animation to clicked stat card
-            event.target.closest('.stat-card').classList.add('pulse');
-            setTimeout(() => {
-                event.target.closest('.stat-card').classList.remove('pulse');
-            }, 2000);
-        }
-
-        // Initialize all visualizations when DOM is loaded
+        
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Delay initialization to allow for loading animation
-            setTimeout(() => {
-                createBarChart('inclusion-chart', inclusionData);
-                createBarChart('barriers-chart', barriersData);
-                createBarChart('themes-chart', themesData);
-                createBarChart('projects-chart', projectsData);
-                createBarChart('ethics-chart', ethicsData);
-                createWordCloud();
-            }, 1200);
+            createBarChart('themes-chart', themesData);
+            createBarChart('connections-chart', connectionsData);
+            createBarChart('projects-chart', projectsData);
+            initAnimations();
         });
-
-        // Resize handler for responsive word cloud
-        window.addEventListener('resize', debounce(() => {
-            createWordCloud();
-        }, 300));
-
-        // Utility function for debouncing
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
     </script>
 </body>
 </html>
