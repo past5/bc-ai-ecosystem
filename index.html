@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.7/d3.layout.cloud.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
         * {
             margin: 0;
@@ -16,27 +16,21 @@
         }
         
         :root {
-            --background: #ffffff;
-            --foreground: #0a0a0a;
-            --muted: #f5f5f5;
-            --muted-foreground: #737373;
-            --border: #e5e5e5;
-            --primary: #0066ff;
-            --primary-foreground: #ffffff;
-            --secondary: #6366f1;
-            --accent: #8b5cf6;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --radius: 8px;
-        }
-        
-        [data-theme="dark"] {
-            --background: #0a0a0a;
-            --foreground: #fafafa;
-            --muted: #171717;
-            --muted-foreground: #a3a3a3;
-            --border: #262626;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border: #334155;
+            --glow-green: #22c55e40;
+            --glow-yellow: #eab30840;
+            --gradient-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --gradient-accent: linear-gradient(135deg, #22c55e 0%, #eab308 100%);
+            --gradient-card: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         }
         
         html {
@@ -45,12 +39,30 @@
         
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--background);
-            color: var(--foreground);
+            background: var(--gradient-primary);
+            color: var(--text-primary);
             line-height: 1.6;
             font-size: 14px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+        
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, var(--glow-green) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--glow-yellow) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, var(--glow-green) 0%, transparent 30%);
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
         }
         
         /* Scroll Progress */
@@ -59,10 +71,11 @@
             top: 0;
             left: 0;
             width: 0%;
-            height: 2px;
-            background: var(--primary);
+            height: 3px;
+            background: var(--gradient-accent);
             z-index: 50;
             transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-green);
         }
         
         /* Container */
@@ -72,12 +85,33 @@
             padding: 0 24px;
         }
         
-        /* Header */
+        /* Logo Section */
+        .logo-section {
+            padding: 40px 0;
+            text-align: center;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo-container {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .logo-image {
+            width: 300px;
+            height: auto;
+            max-width: 90vw;
+            filter: drop-shadow(0 0 20px var(--glow-green));
+        }
+        
+        /* Hero Section */
         .hero {
-            padding: 120px 0 80px;
+            padding: 80px 0;
             text-align: center;
             position: relative;
-            background: linear-gradient(135deg, var(--background) 0%, var(--muted) 100%);
+            background: var(--gradient-primary);
+            overflow: hidden;
         }
         
         .hero::before {
@@ -87,7 +121,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(ellipse at center, rgba(0, 102, 255, 0.1) 0%, transparent 70%);
+            background: 
+                linear-gradient(45deg, transparent 49%, var(--accent-green) 49.5%, var(--accent-green) 50.5%, transparent 51%),
+                linear-gradient(-45deg, transparent 49%, var(--accent-yellow) 49.5%, var(--accent-yellow) 50.5%, transparent 51%);
+            opacity: 0.05;
             pointer-events: none;
         }
         
@@ -95,315 +132,417 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 12px;
-            background: var(--muted);
-            border: 1px solid var(--border);
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-green);
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 500;
-            color: var(--muted-foreground);
-            margin-bottom: 24px;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 32px;
+            box-shadow: 0 0 20px var(--glow-green);
         }
         
         .hero h1 {
-            font-size: clamp(36px, 8vw, 72px);
-            font-weight: 700;
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 800;
             letter-spacing: -0.02em;
             margin-bottom: 24px;
-            background: linear-gradient(135deg, var(--foreground) 0%, var(--muted-foreground) 100%);
+            background: var(--gradient-accent);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 30px var(--glow-green);
         }
         
         .hero p {
             font-size: 18px;
-            color: var(--muted-foreground);
+            color: var(--text-secondary);
             max-width: 600px;
             margin: 0 auto 48px;
+            font-weight: 400;
         }
         
         .hero-stats {
             display: flex;
             justify-content: center;
-            gap: 48px;
+            gap: 64px;
             flex-wrap: wrap;
         }
         
         .hero-stat {
             text-align: center;
+            position: relative;
+        }
+        
+        .hero-stat::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
         }
         
         .hero-stat-number {
             display: block;
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 4px;
+            font-size: 40px;
+            font-weight: 900;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
         }
         
         .hero-stat-label {
             font-size: 14px;
-            color: var(--muted-foreground);
+            color: var(--text-secondary);
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
         
         /* Cards */
         .card {
-            background: var(--background);
+            background: var(--gradient-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
+            border-radius: 12px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-accent);
+            opacity: 0.6;
         }
         
         .card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px var(--glow-green);
+            border-color: var(--accent-green);
         }
         
         .card-header {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         
         .card-title {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             margin-bottom: 8px;
+            color: var(--text-primary);
         }
         
         .card-description {
-            color: var(--muted-foreground);
+            color: var(--text-secondary);
             font-size: 14px;
+            font-weight: 400;
         }
         
         /* Grid */
         .grid {
             display: grid;
-            gap: 24px;
+            gap: 32px;
         }
         
         .grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
         }
         
         .grid-3 {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         }
         
         .grid-4 {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         }
         
         /* Section */
         .section {
-            padding: 80px 0;
+            padding: 100px 0;
+            position: relative;
         }
         
         .section-header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
         }
         
         .section-title {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
-        }
-        
-        .section-description {
-            font-size: 16px;
-            color: var(--muted-foreground);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        /* Metrics Cards */
-        .metric-card {
-            text-align: center;
-            padding: 32px 24px;
-        }
-        
-        .metric-number {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 800;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+            background: var(--gradient-accent);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
+        .section-description {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        
+        /* Metrics Cards */
+        .metric-card {
+            text-align: center;
+            padding: 40px 24px;
+            position: relative;
+        }
+        
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-accent);
+            opacity: 0.8;
+        }
+        
+        .metric-number {
+            font-size: 52px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px var(--glow-green);
+        }
+        
         .metric-label {
             font-size: 14px;
-            font-weight: 500;
-            color: var(--muted-foreground);
+            font-weight: 600;
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            margin-bottom: 8px;
         }
         
         .metric-change {
             font-size: 12px;
-            margin-top: 4px;
+            font-weight: 500;
         }
         
         .metric-change.positive {
-            color: var(--success);
+            color: var(--accent-green);
         }
         
         .metric-change.negative {
-            color: var(--danger);
+            color: #ef4444;
         }
         
         /* Charts */
         .chart-container {
-            background: var(--muted);
-            border-radius: var(--radius);
-            padding: 24px;
-            margin: 24px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin: 32px 0;
+            position: relative;
+        }
+        
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-accent);
         }
         
         .bar-chart {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
         
         .bar-item {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
         
         .bar-label {
-            font-size: 13px;
-            font-weight: 500;
-            min-width: 120px;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 140px;
             flex-shrink: 0;
+            color: var(--text-primary);
         }
         
         .bar-track {
             flex: 1;
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
+            height: 12px;
+            background: var(--bg-primary);
+            border-radius: 6px;
             overflow: hidden;
+            border: 1px solid var(--border);
         }
         
         .bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 4px;
-            transition: width 1s ease;
+            background: var(--gradient-accent);
+            border-radius: 6px;
+            transition: width 1.2s ease;
             width: 0%;
+            box-shadow: 0 0 10px var(--glow-green);
         }
         
         .bar-value {
-            font-size: 12px;
-            font-weight: 600;
-            min-width: 32px;
+            font-size: 13px;
+            font-weight: 700;
+            min-width: 40px;
             text-align: right;
+            color: var(--accent-green);
         }
         
         /* Alerts */
         .alert {
-            padding: 16px;
-            border-radius: var(--radius);
+            padding: 20px;
+            border-radius: 12px;
             border: 1px solid;
             margin: 24px 0;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .alert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            border-radius: 12px 12px 0 0;
         }
         
         .alert-success {
-            background: #f0fdf4;
-            border-color: var(--success);
-            color: #166534;
+            background: rgba(34, 197, 94, 0.1);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+        
+        .alert-success::before {
+            background: var(--accent-green);
         }
         
         .alert-warning {
-            background: #fffbeb;
-            border-color: var(--warning);
-            color: #92400e;
+            background: rgba(234, 179, 8, 0.1);
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+        
+        .alert-warning::before {
+            background: var(--accent-yellow);
         }
         
         .alert-danger {
-            background: #fef2f2;
-            border-color: var(--danger);
-            color: #991b1b;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .alert-danger::before {
+            background: #ef4444;
         }
         
         .alert-info {
-            background: #eff6ff;
-            border-color: var(--primary);
-            color: #1e40af;
+            background: rgba(6, 182, 212, 0.1);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        
+        .alert-info::before {
+            background: var(--accent-cyan);
         }
         
         /* Badge */
         .badge {
             display: inline-flex;
             align-items: center;
-            padding: 4px 8px;
+            padding: 6px 12px;
             font-size: 12px;
-            font-weight: 500;
-            border-radius: 12px;
+            font-weight: 600;
+            border-radius: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .badge-primary {
-            background: var(--primary);
-            color: var(--primary-foreground);
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
         }
         
         .badge-secondary {
-            background: var(--muted);
-            color: var(--muted-foreground);
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-secondary);
+            border: 1px solid var(--text-muted);
         }
         
         .badge-success {
-            background: var(--success);
-            color: white;
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
         }
         
         .badge-warning {
-            background: var(--warning);
-            color: white;
+            background: rgba(234, 179, 8, 0.2);
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
         }
         
         .badge-danger {
-            background: var(--danger);
-            color: white;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
         }
         
         /* Progress */
         .progress {
             width: 100%;
-            height: 8px;
-            background: var(--muted);
-            border-radius: 4px;
+            height: 10px;
+            background: var(--bg-primary);
+            border-radius: 5px;
             overflow: hidden;
+            border: 1px solid var(--border);
         }
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 1s ease;
-            border-radius: 4px;
-        }
-        
-        /* Word Cloud */
-        .wordcloud-container {
-            background: var(--muted);
-            border-radius: var(--radius);
-            padding: 48px 24px;
-            text-align: center;
-            margin: 32px 0;
+            background: var(--gradient-accent);
+            transition: width 1.5s ease;
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--glow-green);
         }
         
         /* Table */
         .table-container {
             overflow-x: auto;
-            border-radius: var(--radius);
+            border-radius: 12px;
             border: 1px solid var(--border);
+            background: var(--bg-secondary);
         }
         
         .table {
@@ -414,27 +553,108 @@
         
         .table th,
         .table td {
-            padding: 12px 16px;
+            padding: 16px 20px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
         
         .table th {
-            background: var(--muted);
-            font-weight: 600;
+            background: var(--bg-primary);
+            font-weight: 700;
+            color: var(--text-primary);
+            position: relative;
+        }
+        
+        .table th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-accent);
+        }
+        
+        .table tbody tr {
+            transition: all 0.2s ease;
         }
         
         .table tbody tr:hover {
-            background: var(--muted);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        
+        .table td {
+            color: var(--text-secondary);
+        }
+        
+        .table td strong {
+            color: var(--text-primary);
         }
         
         /* Footer */
         .footer {
-            padding: 60px 0;
+            padding: 80px 0;
             border-top: 1px solid var(--border);
-            background: var(--muted);
+            background: var(--bg-primary);
             text-align: center;
-            color: var(--muted-foreground);
+            color: var(--text-secondary);
+        }
+        
+        /* Issue Cards */
+        .issue-card {
+            position: relative;
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+        
+        .issue-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-yellow);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .issue-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px var(--glow-yellow);
+        }
+        
+        /* Geometric decorations */
+        .geometric-decoration {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 1px solid var(--accent-green);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .geometric-decoration:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            border-radius: 0;
+            transform: rotate(45deg);
+            animation-delay: -2s;
+        }
+        
+        .geometric-decoration:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            border-radius: 0;
+            animation-delay: -4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
         
         /* Responsive */
@@ -444,11 +664,11 @@
             }
             
             .hero {
-                padding: 80px 0 60px;
+                padding: 60px 0;
             }
             
             .hero-stats {
-                gap: 32px;
+                gap: 40px;
             }
             
             .section {
@@ -456,34 +676,30 @@
             }
             
             .section-header {
-                margin-bottom: 40px;
+                margin-bottom: 50px;
             }
             
             .grid {
-                gap: 16px;
+                gap: 24px;
             }
             
             .bar-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 8px;
+                gap: 12px;
             }
             
             .bar-label {
                 min-width: auto;
             }
-        }
-        
-        /* Animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease;
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+            
+            .logo-image {
+                width: 250px;
+            }
+            
+            .section-title {
+                font-size: 32px;
+            }
         }
         
         /* Theme Toggle */
@@ -491,14 +707,32 @@
             position: fixed;
             top: 24px;
             right: 24px;
-            padding: 8px 12px;
-            background: var(--muted);
+            padding: 12px;
+            background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 16px;
             z-index: 40;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px var(--glow-green);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--glow-green);
+        }
+        
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -507,17 +741,30 @@
     <div class="scroll-progress" id="scrollProgress"></div>
     
     <!-- Theme Toggle -->
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <button class="theme-toggle" onclick="toggleTheme()">⚡</button>
+    
+    <!-- Logo Section -->
+    <section class="logo-section">
+        <div class="container">
+            <div class="logo-container">
+                <img src="bc-ai-logo.png" alt="BC+AI Ecosystem Logo" class="logo-image" />
+            </div>
+        </div>
+    </section>
     
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
+            <div class="geometric-decoration" style="top: 10%; left: 10%;"></div>
+            <div class="geometric-decoration" style="top: 20%; right: 15%;"></div>
+            <div class="geometric-decoration" style="bottom: 30%; left: 20%;"></div>
+            
             <div class="hero-badge">
                 <span>📊</span>
-                May 2025 Survey Analysis
+                Survey Analysis • May 2025
             </div>
-            <h1>BC + AI Ecosystem</h1>
-            <p>Multi-modal, multi-cultural, radically local, and future-facing. Grassroots innovation meets ethical AI development.</p>
+            <h1>Ecosystem Analysis</h1>
+            <p>Grassroots innovation meets ethical AI development. Building British Columbia's future through community-driven artificial intelligence initiatives.</p>
             
             <div class="hero-stats">
                 <div class="hero-stat">
@@ -537,44 +784,44 @@
     </section>
     
     <!-- Key Metrics -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Community Health</h2>
-                <p class="section-description">Overall ecosystem health shows strong community engagement with room for improvement in key areas</p>
+                <p class="section-description">Overall ecosystem health shows strong community engagement with identified opportunities for strategic improvement</p>
             </div>
             
             <div class="grid grid-4">
                 <div class="card metric-card">
                     <div class="metric-number">71.4%</div>
                     <div class="metric-label">Feel Welcomed</div>
-                    <div class="metric-change positive">+5% vs baseline</div>
+                    <div class="metric-change positive">Excellent inclusion</div>
                 </div>
                 <div class="card metric-card">
                     <div class="metric-number">0.0%</div>
-                    <div class="metric-label">Excluded</div>
-                    <div class="metric-change positive">Excellent inclusion</div>
+                    <div class="metric-label">Feel Excluded</div>
+                    <div class="metric-change positive">Zero exclusion</div>
                 </div>
                 <div class="card metric-card">
                     <div class="metric-number">150</div>
                     <div class="metric-label">Community Mentions</div>
-                    <div class="metric-change positive">Top theme</div>
+                    <div class="metric-change positive">Top priority</div>
                 </div>
                 <div class="card metric-card">
                     <div class="metric-number">39</div>
                     <div class="metric-label">Project Ideas</div>
-                    <div class="metric-change positive">High innovation</div>
+                    <div class="metric-change positive">Innovation ready</div>
                 </div>
             </div>
         </div>
     </section>
     
     <!-- Top Themes -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Key Themes</h2>
-                <p class="section-description">Most discussed topics across all survey responses</p>
+                <p class="section-description">Most discussed topics across all survey responses reveal community priorities and concerns</p>
             </div>
             
             <div class="card">
@@ -586,44 +833,44 @@
     </section>
     
     <!-- Critical Issues -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Critical Issues</h2>
-                <p class="section-description">Key challenges identified through community feedback</p>
+                <p class="section-description">Three major challenges identified through comprehensive community feedback analysis</p>
             </div>
             
             <div class="grid grid-3">
-                <div class="card">
+                <div class="issue-card">
                     <div class="card-header">
-                        <div class="card-title">🟠 Funding Needs</div>
+                        <div class="card-title">🔴 Funding Gap</div>
                         <div class="card-description">102 funding-related mentions</div>
                     </div>
-                    <p>Strategic funding development needed to support ecosystem growth and innovation projects.</p>
+                    <p>Strategic funding development needed to support ecosystem growth, innovation projects, and community initiatives across all sectors.</p>
                     <div class="alert alert-warning">
-                        <strong>Priority:</strong> Develop comprehensive funding strategy
+                        <strong>Priority Action:</strong> Develop comprehensive funding ecosystem strategy
                     </div>
                 </div>
                 
-                <div class="card">
+                <div class="issue-card">
                     <div class="card-header">
-                        <div class="card-title">🟠 Coordination Gaps</div>
+                        <div class="card-title">🔴 Coordination Gaps</div>
                         <div class="card-description">20 fragmentation mentions</div>
                     </div>
-                    <p>Improve ecosystem coordination to eliminate duplication and maximize synergies.</p>
+                    <p>Improve ecosystem coordination to eliminate duplication of efforts and maximize synergies between organizations and initiatives.</p>
                     <div class="alert alert-warning">
-                        <strong>Action:</strong> Establish coordination framework
+                        <strong>Action Required:</strong> Establish unified coordination framework
                     </div>
                 </div>
                 
-                <div class="card">
+                <div class="issue-card">
                     <div class="card-header">
-                        <div class="card-title">🟠 Government Disconnect</div>
+                        <div class="card-title">🔴 Government Disconnect</div>
                         <div class="card-description">Only 37 government mentions</div>
                     </div>
-                    <p>Strengthen public-private partnerships and government engagement in AI initiatives.</p>
+                    <p>Strengthen public-private partnerships and increase government engagement in AI initiatives and policy development.</p>
                     <div class="alert alert-warning">
-                        <strong>Need:</strong> Enhanced government collaboration
+                        <strong>Gap Identified:</strong> Enhanced government collaboration needed
                     </div>
                 </div>
             </div>
@@ -631,37 +878,40 @@
     </section>
     
     <!-- Opportunities -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Key Opportunities</h2>
-                <p class="section-description">Areas of strength and potential for ecosystem growth</p>
+                <p class="section-description">Areas of strength and high potential for accelerated ecosystem growth and innovation</p>
             </div>
             
             <div class="grid grid-2">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">🚀 Innovation Pipeline</div>
+                        <span class="badge badge-success">High Activity</span>
                     </div>
-                    <ul style="margin: 16px 0; padding-left: 20px;">
-                        <li>39 concrete project ideas identified</li>
-                        <li>40 transformation suggestions collected</li>
-                        <li>Strong community engagement (97.6% completion)</li>
+                    <ul style="margin: 20px 0; padding-left: 20px; color: var(--text-secondary);">
+                        <li>39 concrete project ideas identified across sectors</li>
+                        <li>40 transformation suggestions collected from community</li>
+                        <li>97.6% survey completion indicates strong engagement</li>
+                        <li>Cross-sector collaboration opportunities emerging</li>
                     </ul>
                     <div class="alert alert-success">
-                        <strong>Strength:</strong> Highly engaged, innovative community
+                        <strong>Strength:</strong> Highly engaged, innovation-ready community
                     </div>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">🎯 Connection Hub</div>
+                        <div class="card-title">🎯 Connection Hubs</div>
+                        <span class="badge badge-primary">Active Network</span>
                     </div>
                     <div class="chart-container">
                         <div class="bar-chart" id="connections-chart"></div>
                     </div>
                     <div class="alert alert-info">
-                        <strong>Primary Hub:</strong> Meetup events (12 mentions)
+                        <strong>Primary Hub:</strong> Meetup events driving community connections
                     </div>
                 </div>
             </div>
@@ -669,11 +919,11 @@
     </section>
     
     <!-- Project Categories -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Project Ideas by Category</h2>
-                <p class="section-description">Distribution of innovation projects proposed by community</p>
+                <h2 class="section-title">Innovation Categories</h2>
+                <p class="section-description">Distribution and focus areas of project ideas proposed by the community</p>
             </div>
             
             <div class="card">
@@ -682,71 +932,74 @@
                 </div>
             </div>
             
-            <div class="grid grid-2" style="margin-top: 32px;">
+            <div class="grid grid-2" style="margin-top: 40px;">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Healthcare Applications</div>
                         <span class="badge badge-success">5 projects</span>
                     </div>
-                    <p>AI solutions for patient care, senior care, and healthcare optimization.</p>
+                    <p>AI solutions focusing on patient care optimization, senior care support systems, and healthcare infrastructure improvements.</p>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Creative Projects</div>
+                        <div class="card-title">Creative & Cultural Projects</div>
                         <span class="badge badge-secondary">7 projects</span>
                     </div>
-                    <p>Music visualization, design tools, and creative AI applications.</p>
+                    <p>Music visualization tools, creative AI applications, and cultural technology integration projects.</p>
                 </div>
             </div>
         </div>
     </section>
     
     <!-- Strategic Vision -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Strategic Vision</h2>
-                <p class="section-description">Evidence-based recommendations for ecosystem development</p>
+                <p class="section-description">Evidence-based recommendations for sustainable ecosystem development and growth</p>
             </div>
             
             <div class="grid grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">✅ Well-Supported</div>
+                        <div class="card-title">✅ Address Financial Barriers</div>
                         <span class="badge badge-success">Strong Evidence</span>
                     </div>
-                    <h4 style="margin: 16px 0 8px 0;">Address Financial Barriers</h4>
-                    <p style="font-size: 14px; color: var(--muted-foreground); margin-bottom: 12px;">97 funding mentions (highest theme frequency)</p>
+                    <h4 style="margin: 20px 0 12px 0; color: var(--text-primary);">Funding Ecosystem Development</h4>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">97 funding mentions (highest theme frequency) with direct community impact evidence</p>
                     <div class="progress">
                         <div class="progress-bar" style="width: 95%"></div>
                     </div>
+                    <p style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">Evidence strength: 95%</p>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">✅ Well-Supported</div>
+                        <div class="card-title">✅ Scale Community Practices</div>
                         <span class="badge badge-success">Strong Evidence</span>
                     </div>
-                    <h4 style="margin: 16px 0 8px 0;">Scale Community Practices</h4>
-                    <p style="font-size: 14px; color: var(--muted-foreground); margin-bottom: 12px;">71.4% feel welcomed, 0% excluded</p>
+                    <h4 style="margin: 20px 0 12px 0; color: var(--text-primary);">Inclusion & Engagement</h4>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">71.4% feel welcomed, 0% excluded - clear success metrics for replication</p>
                     <div class="progress">
                         <div class="progress-bar" style="width: 90%"></div>
                     </div>
+                    <p style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">Evidence strength: 90%</p>
                 </div>
             </div>
             
-            <div class="alert alert-info" style="margin-top: 24px;">
-                <strong>Unified Vision:</strong> BC AI ecosystem with strong coordination, sustainable funding, inclusive community, national recognition, and robust government-industry-academic partnerships.
+            <div class="alert alert-info" style="margin-top: 40px;">
+                <strong>Unified Vision:</strong> BC AI ecosystem with strong coordination mechanisms, sustainable funding models, inclusive community practices, national recognition, and robust government-industry-academic partnerships driving ethical innovation.
             </div>
         </div>
     </section>
     
-    <!-- Data Table -->
-    <section class="section">
+    <!-- Data Analysis -->
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Theme Analysis</h2>
+                <h2 class="section-title">Detailed Analysis</h2>
+                <p class="section-description">Comprehensive breakdown of themes, mentions, and community sentiment</p>
             </div>
             
             <div class="table-container">
@@ -756,26 +1009,26 @@
                             <th>Theme</th>
                             <th>Mentions</th>
                             <th>Primary Context</th>
-                            <th>Sentiment</th>
+                            <th>Community Sentiment</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><strong>Community</strong></td>
                             <td>150</td>
-                            <td>Networking, collaboration, events</td>
-                            <td><span class="badge badge-success">Positive</span></td>
+                            <td>Networking, collaboration, events, inclusion</td>
+                            <td><span class="badge badge-success">Highly Positive</span></td>
                         </tr>
                         <tr>
                             <td><strong>Infrastructure</strong></td>
                             <td>117</td>
-                            <td>Platforms, tools, technical systems</td>
+                            <td>Platforms, tools, technical systems, development</td>
                             <td><span class="badge badge-secondary">Neutral</span></td>
                         </tr>
                         <tr>
                             <td><strong>Funding</strong></td>
                             <td>102</td>
-                            <td>Investment, grants, financial support</td>
+                            <td>Investment, grants, financial support, barriers</td>
                             <td><span class="badge badge-warning">Concerned</span></td>
                         </tr>
                         <tr>
@@ -787,8 +1040,26 @@
                         <tr>
                             <td><strong>Ethics</strong></td>
                             <td>54</td>
-                            <td>Responsible AI, governance, safety</td>
+                            <td>Responsible AI, governance, safety protocols</td>
                             <td><span class="badge badge-success">Positive</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Startups</strong></td>
+                            <td>49</td>
+                            <td>Entrepreneurship, innovation, business development</td>
+                            <td><span class="badge badge-primary">Optimistic</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Research</strong></td>
+                            <td>41</td>
+                            <td>Academic collaboration, R&D, innovation</td>
+                            <td><span class="badge badge-primary">Engaged</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Government</strong></td>
+                            <td>37</td>
+                            <td>Policy, regulation, public sector engagement</td>
+                            <td><span class="badge badge-warning">Disconnected</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -799,8 +1070,10 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p><strong>Methodology Note:</strong> Analysis based on 42 survey responses collected in May 2025. Self-selected sample may not represent entire BC AI community.</p>
-            <p style="margin-top: 16px; font-size: 12px;">Report generated on 2025-05-26 • BC + AI Ecosystem Analysis</p>
+            <p><strong>Methodology Note:</strong> Analysis based on 42 survey responses collected in May 2025. Self-selected sample may not represent entire BC AI community. Results should be interpreted as exploratory findings rather than definitive conclusions.</p>
+            <p style="margin-top: 20px; font-size: 12px; color: var(--text-muted);">
+                Report generated on 2025-05-26 08:09:40 • BC + AI Ecosystem Analysis Dashboard
+            </p>
         </div>
     </footer>
     
@@ -808,33 +1081,35 @@
         // Data from the provided documents
         const themesData = [
             { label: "Community", value: 150, color: "#22c55e" },
-            { label: "Infrastructure", value: 117, color: "#0066ff" },
-            { label: "Funding", value: 102, color: "#f59e0b" },
+            { label: "Infrastructure", value: 117, color: "#06b6d4" },
+            { label: "Funding", value: 102, color: "#eab308" },
             { label: "Talent", value: 67, color: "#6366f1" },
             { label: "Ethics", value: 54, color: "#8b5cf6" },
-            { label: "Startups", value: 49, color: "#ef4444" },
-            { label: "Research", value: 41, color: "#06b6d4" },
+            { label: "Startups", value: 49, color: "#f59e0b" },
+            { label: "Research", value: 41, color: "#22c55e" },
             { label: "Government", value: 37, color: "#64748b" }
         ];
         
         const connectionsData = [
             { label: "Meetup", value: 12, color: "#22c55e" },
-            { label: "Online", value: 8, color: "#0066ff" },
+            { label: "Online", value: 8, color: "#06b6d4" },
             { label: "LinkedIn", value: 5, color: "#6366f1" },
             { label: "Vancouver AI", value: 5, color: "#8b5cf6" },
-            { label: "YouTube", value: 4, color: "#ef4444" }
+            { label: "YouTube", value: 4, color: "#eab308" },
+            { label: "Twitter", value: 2, color: "#f59e0b" },
+            { label: "Newsletter", value: 2, color: "#22c55e" }
         ];
         
         const projectsData = [
             { label: "Other", value: 19, color: "#64748b" },
             { label: "Creative", value: 7, color: "#8b5cf6" },
             { label: "Healthcare", value: 5, color: "#22c55e" },
-            { label: "Infrastructure", value: 5, color: "#0066ff" },
-            { label: "Government", value: 2, color: "#f59e0b" },
-            { label: "Business", value: 1, color: "#ef4444" }
+            { label: "Infrastructure", value: 5, color: "#06b6d4" },
+            { label: "Government", value: 2, color: "#eab308" },
+            { label: "Business", value: 1, color: "#f59e0b" }
         ];
         
-        // Create bar chart function
+        // Create bar chart function with enhanced styling
         function createBarChart(containerId, data) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -855,7 +1130,7 @@
                 
                 const fill = document.createElement("div");
                 fill.className = "bar-fill";
-                fill.style.backgroundColor = item.color;
+                fill.style.background = `linear-gradient(90deg, ${item.color}, ${item.color}aa)`;
                 
                 const value = document.createElement("div");
                 value.className = "bar-value";
@@ -867,14 +1142,14 @@
                 barItem.appendChild(value);
                 container.appendChild(barItem);
                 
-                // Animate
+                // Animate with stagger effect
                 setTimeout(() => {
                     fill.style.width = ((item.value / maxValue) * 100) + "%";
-                }, 200 + (index * 100));
+                }, 300 + (index * 150));
             });
         }
         
-        // Scroll progress
+        // Scroll progress with glow effect
         window.addEventListener('scroll', function() {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -882,21 +1157,13 @@
             document.getElementById('scrollProgress').style.width = scrolled + '%';
         });
         
-        // Theme toggle
+        // Theme toggle (placeholder for future enhancement)
         function toggleTheme() {
-            const body = document.body;
-            const button = document.querySelector('.theme-toggle');
-            
-            if (body.hasAttribute('data-theme')) {
-                body.removeAttribute('data-theme');
-                button.textContent = '🌙';
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                button.textContent = '☀️';
-            }
+            // Placeholder for theme toggle functionality
+            console.log('Theme toggle clicked');
         }
         
-        // Fade in animation
+        // Fade in animation observer
         function initAnimations() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -904,19 +1171,35 @@
                         entry.target.classList.add('visible');
                     }
                 });
-            }, { threshold: 0.1 });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
             
             document.querySelectorAll('.fade-in').forEach(el => {
                 observer.observe(el);
             });
         }
         
-        // Initialize
+        // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            createBarChart('themes-chart', themesData);
-            createBarChart('connections-chart', connectionsData);
-            createBarChart('projects-chart', projectsData);
-            initAnimations();
+            // Delay chart initialization for smooth loading
+            setTimeout(() => {
+                createBarChart('themes-chart', themesData);
+                createBarChart('connections-chart', connectionsData);
+                createBarChart('projects-chart', projectsData);
+                initAnimations();
+            }, 500);
+        });
+        
+        // Add some interactive hover effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card, .issue-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'all 0.3s ease';
+                });
+            });
         });
     </script>
 </body>
