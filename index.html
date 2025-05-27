@@ -700,6 +700,23 @@
             .section-title {
                 font-size: 32px;
             }
+            
+            /* Carousel mobile adjustments */
+            .quotes-carousel {
+                padding: 32px 20px;
+            }
+            
+            .carousel-container {
+                height: 260px;
+            }
+            
+            .quote-slide {
+                padding: 0 20px;
+            }
+            
+            .quote-text {
+                font-size: 16px;
+            }
         }
         
         /* Theme Toggle */
@@ -721,6 +738,140 @@
         .theme-toggle:hover {
             transform: scale(1.1);
             box-shadow: 0 0 30px var(--glow-green);
+        }
+        
+        /* Quotes Carousel */
+        .quotes-carousel {
+            position: relative;
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 48px 32px;
+            margin: 64px 0;
+            overflow: hidden;
+        }
+        
+        .quotes-carousel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-accent);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .carousel-container {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .quote-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+            text-align: center;
+            padding: 0 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .quote-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .quote-text {
+            font-size: 18px;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+        
+        .quote-author {
+            font-size: 14px;
+            color: var(--accent-green);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .quote-category {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 32px;
+        }
+        
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+        
+        .carousel-dot.active {
+            background: var(--accent-green);
+            box-shadow: 0 0 15px var(--glow-green);
+            transform: scale(1.2);
+        }
+        
+        .carousel-dot:hover {
+            background: var(--accent-green);
+            transform: scale(1.1);
+        }
+        
+        /* Mini quotes */
+        .mini-quote {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            position: relative;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+        
+        .mini-quote::before {
+            content: '"';
+            top: -10px;
+            left: 16px;
+            font-size: 40px;
+            color: var(--accent-green);
+            background: var(--bg-secondary);
+            padding: 0 8px;
+            font-family: serif;
+        }
+        
+        .mini-quote-author {
+            text-align: right;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--accent-green);
+            font-weight: 600;
         }
         
         /* Animations */
@@ -768,16 +919,58 @@
             
             <div class="hero-stats">
                 <div class="hero-stat">
-                    <span class="hero-stat-number">42</span>
+                    <span class="hero-stat-number">48</span>
                     <span class="hero-stat-label">Responses</span>
                 </div>
                 <div class="hero-stat">
-                    <span class="hero-stat-number">97.6%</span>
+                    <span class="hero-stat-number">97.9%</span>
                     <span class="hero-stat-label">Completion Rate</span>
                 </div>
                 <div class="hero-stat">
-                    <span class="hero-stat-number">0.86</span>
+                    <span class="hero-stat-number">0.85</span>
                     <span class="hero-stat-label">Health Score</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Community Voices Carousel -->
+    <section class="section fade-in" style="padding: 60px 0;">
+        <div class="container">
+            <div class="quotes-carousel">
+                <div class="carousel-container" id="main-carousel">
+                    <div class="quote-slide active">
+                      <div class="quote-text">I would love to see BC become a global leader not just in technical brilliance, but in emotional intelligence. A place where AI doesn't just work. It cares. It remembers. It heals.</div>
+                      <div class="quote-author">Ecosystem Visionary</div>
+                      <div class="quote-category">Strategic Vision</div>
+                    </div>
+                    <div class="quote-slide">
+                        <div class="quote-text">A BC-focused AI hub that maps local needs to local AI talent—almost like a matchmaking platform for public good. Like connecting civic challenges with local solutions.</div>
+                        <div class="quote-author">Community Builder</div>
+                        <div class="quote-category">Infrastructure Vision</div>
+                    </div>
+                    <div class="quote-slide">
+                        <div class="quote-text">So many ideas in healthcare to improve patient care - especially senior care. There's enormous potential to make a real difference in people's lives.</div>
+                        <div class="quote-author">Healthcare Innovator</div>
+                        <div class="quote-category">Healthcare Applications</div>
+                    </div>
+                    <div class="quote-slide">
+                        <div class="quote-text">We need funding that supports experimentation and learning. Not just traditional grants, but community-driven support for new builders to take action.</div>
+                        <div class="quote-author">Ecosystem Advocate</div>
+                        <div class="quote-category">Funding Innovation</div>
+                    </div>
+                    <div class="quote-slide">
+                        <div class="quote-text">I'd love to see more AI in local government. Imagine a 311 service that's entirely AI-based - making civic engagement more accessible and responsive.</div>
+                        <div class="quote-author">Civic Innovator</div>
+                        <div class="quote-category">Government Integration</div>
+                    </div>
+                </div>
+                <div class="carousel-dots">
+                    <button class="carousel-dot active" data-slide="0"></button>
+                    <button class="carousel-dot" data-slide="1"></button>
+                    <button class="carousel-dot" data-slide="2"></button>
+                    <button class="carousel-dot" data-slide="3"></button>
+                    <button class="carousel-dot" data-slide="4"></button>
                 </div>
             </div>
         </div>
@@ -793,7 +986,7 @@
             
             <div class="grid grid-4">
                 <div class="card metric-card">
-                    <div class="metric-number">71.4%</div>
+                    <div class="metric-number">70.8%</div>
                     <div class="metric-label">Feel Welcomed</div>
                     <div class="metric-change positive">Excellent inclusion</div>
                 </div>
@@ -803,12 +996,12 @@
                     <div class="metric-change positive">Zero exclusion</div>
                 </div>
                 <div class="card metric-card">
-                    <div class="metric-number">150</div>
+                    <div class="metric-number">199</div>
                     <div class="metric-label">Community Mentions</div>
                     <div class="metric-change positive">Top priority</div>
                 </div>
                 <div class="card metric-card">
-                    <div class="metric-number">39</div>
+                    <div class="metric-number">45</div>
                     <div class="metric-label">Project Ideas</div>
                     <div class="metric-change positive">Innovation ready</div>
                 </div>
@@ -844,7 +1037,7 @@
                 <div class="issue-card">
                     <div class="card-header">
                         <div class="card-title">🔴 Funding Gap</div>
-                        <div class="card-description">102 funding-related mentions</div>
+                        <div class="card-description">120 funding-related mentions</div>
                     </div>
                     <p>Strategic funding development needed to support ecosystem growth, innovation projects, and community initiatives across all sectors.</p>
                     <div class="alert alert-warning">
@@ -855,7 +1048,7 @@
                 <div class="issue-card">
                     <div class="card-header">
                         <div class="card-title">🔴 Coordination Gaps</div>
-                        <div class="card-description">20 fragmentation mentions</div>
+                        <div class="card-description">24 fragmentation mentions</div>
                     </div>
                     <p>Improve ecosystem coordination to eliminate duplication of efforts and maximize synergies between organizations and initiatives.</p>
                     <div class="alert alert-warning">
@@ -866,7 +1059,7 @@
                 <div class="issue-card">
                     <div class="card-header">
                         <div class="card-title">🔴 Government Disconnect</div>
-                        <div class="card-description">Only 37 government mentions</div>
+                        <div class="card-description">Only 49 government mentions</div>
                     </div>
                     <p>Strengthen public-private partnerships and increase government engagement in AI initiatives and policy development.</p>
                     <div class="alert alert-warning">
@@ -892,13 +1085,23 @@
                         <span class="badge badge-success">High Activity</span>
                     </div>
                     <ul style="margin: 20px 0; padding-left: 20px; color: var(--text-secondary);">
-                        <li>39 concrete project ideas identified across sectors</li>
-                        <li>40 transformation suggestions collected from community</li>
-                        <li>97.6% survey completion indicates strong engagement</li>
+                        <li>45 concrete project ideas identified across sectors</li>
+                        <li>46 transformation suggestions collected from community</li>
+                        <li>97.9% survey completion indicates strong engagement</li>
                         <li>Cross-sector collaboration opportunities emerging</li>
                     </ul>
                     <div class="alert alert-success">
                         <strong>Strength:</strong> Highly engaged, innovation-ready community
+                    </div>
+                    
+                    <div class="mini-quote">
+                        Working on how to "edventurefy" curriculum to better align with how the human brain loves to learn.
+                        <div class="mini-quote-author">— Education Innovator</div>
+                    </div>
+                    
+                    <div class="mini-quote">
+                        Something to enhance our natural experience. Something to help those most in need of help and support.
+                        <div class="mini-quote-author">— Community Advocate</div>
                     </div>
                 </div>
                 
@@ -911,7 +1114,7 @@
                         <div class="bar-chart" id="connections-chart"></div>
                     </div>
                     <div class="alert alert-info">
-                        <strong>Primary Hub:</strong> Meetup events driving community connections
+                        <strong>Primary Hub:</strong> Meetup events driving community connections (15 mentions)
                     </div>
                 </div>
             </div>
@@ -932,11 +1135,43 @@
                 </div>
             </div>
             
+            <!-- Project Ideas Carousel -->
+            <div class="quotes-carousel" style="margin-top: 48px;">
+                <div class="carousel-container" id="projects-carousel">
+                    <div class="quote-slide active">
+                        <div class="quote-text">As a rabid music fan who's created tons of visuals for musicians, I'd love to see someone build a kick-ass music visualizer powered by AI.</div>
+                        <div class="quote-author">Creative Developer</div>
+                        <div class="quote-category">Creative Applications</div>
+                    </div>
+                    <div class="quote-slide">
+                        <div class="quote-text">An AI-powered context engine for collaborative decision-making. A tool that doesn't just summarize meetings but actually understands and builds on ideas.</div>
+                        <div class="quote-author">Product Designer</div>
+                        <div class="quote-category">Collaboration Tools</div>
+                    </div>
+                    <div class="quote-slide">
+                        <div class="quote-text">A comprehensive platform for AI adoption and integration in groups and organizations. Making AI accessible to everyone, not just tech companies.</div>
+                        <div class="quote-author">Enterprise Consultant</div>
+                        <div class="quote-category">Infrastructure Platform</div>
+                    </div>
+                    <div class="quote-slide">
+                        <div class="quote-text">BC Happiness App - imagine technology that actually makes our communities healthier and more connected.</div>
+                        <div class="quote-author">Wellness Advocate</div>
+                        <div class="quote-category">Community Wellbeing</div>
+                    </div>
+                </div>
+                <div class="carousel-dots">
+                    <button class="carousel-dot active" data-slide="0"></button>
+                    <button class="carousel-dot" data-slide="1"></button>
+                    <button class="carousel-dot" data-slide="2"></button>
+                    <button class="carousel-dot" data-slide="3"></button>
+                </div>
+            </div>
+            
             <div class="grid grid-2" style="margin-top: 40px;">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Healthcare Applications</div>
-                        <span class="badge badge-success">5 projects</span>
+                        <span class="badge badge-success">6 projects</span>
                     </div>
                     <p>AI solutions focusing on patient care optimization, senior care support systems, and healthcare infrastructure improvements.</p>
                 </div>
@@ -944,7 +1179,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">Creative & Cultural Projects</div>
-                        <span class="badge badge-secondary">7 projects</span>
+                        <span class="badge badge-secondary">8 projects</span>
                     </div>
                     <p>Music visualization tools, creative AI applications, and cultural technology integration projects.</p>
                 </div>
@@ -967,7 +1202,7 @@
                         <span class="badge badge-success">Strong Evidence</span>
                     </div>
                     <h4 style="margin: 20px 0 12px 0; color: var(--text-primary);">Funding Ecosystem Development</h4>
-                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">97 funding mentions (highest theme frequency) with direct community impact evidence</p>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">120 funding mentions (highest theme frequency) with direct community impact evidence</p>
                     <div class="progress">
                         <div class="progress-bar" style="width: 95%"></div>
                     </div>
@@ -980,7 +1215,7 @@
                         <span class="badge badge-success">Strong Evidence</span>
                     </div>
                     <h4 style="margin: 20px 0 12px 0; color: var(--text-primary);">Inclusion & Engagement</h4>
-                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">71.4% feel welcomed, 0% excluded - clear success metrics for replication</p>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">70.8% feel welcomed, 0% excluded - clear success metrics for replication</p>
                     <div class="progress">
                         <div class="progress-bar" style="width: 90%"></div>
                     </div>
@@ -990,6 +1225,11 @@
             
             <div class="alert alert-info" style="margin-top: 40px;">
                 <strong>Unified Vision:</strong> BC AI ecosystem with strong coordination mechanisms, sustainable funding models, inclusive community practices, national recognition, and robust government-industry-academic partnerships driving ethical innovation.
+            </div>
+            
+            <div class="mini-quote" style="margin-top: 32px;">
+                We need an AI fund with $50M starting capital that supports experimentation and learning for learners, educators, supporters, and builders.
+                <div class="mini-quote-author">— Ecosystem Visionary</div>
             </div>
         </div>
     </section>
@@ -1015,49 +1255,49 @@
                     <tbody>
                         <tr>
                             <td><strong>Community</strong></td>
-                            <td>150</td>
+                            <td>199</td>
                             <td>Networking, collaboration, events, inclusion</td>
                             <td><span class="badge badge-success">Highly Positive</span></td>
                         </tr>
                         <tr>
                             <td><strong>Infrastructure</strong></td>
-                            <td>117</td>
+                            <td>153</td>
                             <td>Platforms, tools, technical systems, development</td>
                             <td><span class="badge badge-secondary">Neutral</span></td>
                         </tr>
                         <tr>
                             <td><strong>Funding</strong></td>
-                            <td>102</td>
+                            <td>120</td>
                             <td>Investment, grants, financial support, barriers</td>
                             <td><span class="badge badge-warning">Concerned</span></td>
                         </tr>
                         <tr>
                             <td><strong>Talent</strong></td>
-                            <td>67</td>
+                            <td>87</td>
                             <td>Skills, education, workforce development</td>
                             <td><span class="badge badge-secondary">Neutral</span></td>
                         </tr>
                         <tr>
                             <td><strong>Ethics</strong></td>
-                            <td>54</td>
+                            <td>71</td>
                             <td>Responsible AI, governance, safety protocols</td>
                             <td><span class="badge badge-success">Positive</span></td>
                         </tr>
                         <tr>
                             <td><strong>Startups</strong></td>
-                            <td>49</td>
+                            <td>58</td>
                             <td>Entrepreneurship, innovation, business development</td>
                             <td><span class="badge badge-primary">Optimistic</span></td>
                         </tr>
                         <tr>
                             <td><strong>Research</strong></td>
-                            <td>41</td>
+                            <td>51</td>
                             <td>Academic collaboration, R&D, innovation</td>
                             <td><span class="badge badge-primary">Engaged</span></td>
                         </tr>
                         <tr>
                             <td><strong>Government</strong></td>
-                            <td>37</td>
+                            <td>49</td>
                             <td>Policy, regulation, public sector engagement</td>
                             <td><span class="badge badge-warning">Disconnected</span></td>
                         </tr>
@@ -1070,9 +1310,9 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p><strong>Methodology Note:</strong> Analysis based on 42 survey responses collected in May 2025. Self-selected sample may not represent entire BC AI community. Results should be interpreted as exploratory findings rather than definitive conclusions.</p>
+            <p><strong>Methodology Note:</strong> Analysis based on 48 survey responses collected in May 2025. Self-selected sample may not represent entire BC AI community. Results should be interpreted as exploratory findings rather than definitive conclusions.</p>
             <p style="margin-top: 20px; font-size: 12px; color: var(--text-muted);">
-                Report generated on 2025-05-26 08:09:40 • BC + AI Ecosystem Analysis Dashboard
+                Report generated on 2025-05-26 15:57:13 • BC + AI Ecosystem Analysis Dashboard
             </p>
         </div>
     </footer>
@@ -1080,32 +1320,33 @@
     <script>
         // Data from the provided documents
         const themesData = [
-            { label: "Community", value: 150, color: "#22c55e" },
-            { label: "Infrastructure", value: 117, color: "#06b6d4" },
-            { label: "Funding", value: 102, color: "#eab308" },
-            { label: "Talent", value: 67, color: "#6366f1" },
-            { label: "Ethics", value: 54, color: "#8b5cf6" },
-            { label: "Startups", value: 49, color: "#f59e0b" },
-            { label: "Research", value: 41, color: "#22c55e" },
-            { label: "Government", value: 37, color: "#64748b" }
+            { label: "Community", value: 199, color: "#22c55e" },
+            { label: "Infrastructure", value: 153, color: "#06b6d4" },
+            { label: "Funding", value: 120, color: "#eab308" },
+            { label: "Talent", value: 87, color: "#6366f1" },
+            { label: "Ethics", value: 71, color: "#8b5cf6" },
+            { label: "Startups", value: 58, color: "#f59e0b" },
+            { label: "Research", value: 51, color: "#22c55e" },
+            { label: "Government", value: 49, color: "#64748b" }
         ];
         
         const connectionsData = [
-            { label: "Meetup", value: 12, color: "#22c55e" },
-            { label: "Online", value: 8, color: "#06b6d4" },
-            { label: "LinkedIn", value: 5, color: "#6366f1" },
-            { label: "Vancouver AI", value: 5, color: "#8b5cf6" },
-            { label: "YouTube", value: 4, color: "#eab308" },
-            { label: "Twitter", value: 2, color: "#f59e0b" },
-            { label: "Newsletter", value: 2, color: "#22c55e" }
+            { label: "Meetup", value: 15, color: "#22c55e" },
+            { label: "Online", value: 10, color: "#06b6d4" },
+            { label: "LinkedIn", value: 7, color: "#6366f1" },
+            { label: "Vancouver AI", value: 6, color: "#8b5cf6" },
+            { label: "YouTube", value: 6, color: "#eab308" },
+            { label: "Newsletter", value: 3, color: "#f59e0b" },
+            { label: "Conference", value: 3, color: "#22c55e" },
+            { label: "Twitter", value: 2, color: "#64748b" }
         ];
         
         const projectsData = [
             { label: "Other", value: 19, color: "#64748b" },
-            { label: "Creative", value: 7, color: "#8b5cf6" },
-            { label: "Healthcare", value: 5, color: "#22c55e" },
-            { label: "Infrastructure", value: 5, color: "#06b6d4" },
-            { label: "Government", value: 2, color: "#eab308" },
+            { label: "Creative", value: 8, color: "#8b5cf6" },
+            { label: "Infrastructure", value: 8, color: "#06b6d4" },
+            { label: "Healthcare", value: 6, color: "#22c55e" },
+            { label: "Government", value: 3, color: "#eab308" },
             { label: "Business", value: 1, color: "#f59e0b" }
         ];
         
@@ -1163,6 +1404,96 @@
             console.log('Theme toggle clicked');
         }
         
+        // Quotes Carousel Functionality
+        let currentQuote = 0;
+        let currentProjectQuote = 0;
+        let quoteInterval;
+        let projectQuoteInterval;
+        
+        // Global functions for carousel control
+        window.showQuote = function(index) {
+            const carousel = document.getElementById('main-carousel');
+            if (!carousel) return;
+            
+            const slides = carousel.querySelectorAll('.quote-slide');
+            const dotsContainer = carousel.parentElement.querySelector('.carousel-dots');
+            const dots = dotsContainer.querySelectorAll('.carousel-dot');
+            
+            slides[currentQuote].classList.remove('active');
+            dots[currentQuote].classList.remove('active');
+            
+            currentQuote = index;
+            
+            slides[currentQuote].classList.add('active');
+            dots[currentQuote].classList.add('active');
+        };
+        
+        window.showProjectQuote = function(index) {
+            const carousel = document.getElementById('projects-carousel');
+            if (!carousel) return;
+            
+            const slides = carousel.querySelectorAll('.quote-slide');
+            const dotsContainer = carousel.parentElement.querySelector('.carousel-dots');
+            const dots = dotsContainer.querySelectorAll('.carousel-dot');
+            
+            slides[currentProjectQuote].classList.remove('active');
+            dots[currentProjectQuote].classList.remove('active');
+            
+            currentProjectQuote = index;
+            
+            slides[currentProjectQuote].classList.add('active');
+            dots[currentProjectQuote].classList.add('active');
+        };
+        
+        function nextQuote() {
+            const totalQuotes = document.querySelectorAll('#main-carousel .quote-slide').length;
+            if (totalQuotes > 0) {
+                window.showQuote((currentQuote + 1) % totalQuotes);
+            }
+        }
+        
+        function nextProjectQuote() {
+            const totalQuotes = document.querySelectorAll('#projects-carousel .quote-slide').length;
+            if (totalQuotes > 0) {
+                window.showProjectQuote((currentProjectQuote + 1) % totalQuotes);
+            }
+        }
+        
+        function startCarousels() {
+            // Auto-advance main carousel every 6 seconds
+            quoteInterval = setInterval(nextQuote, 6000);
+            
+            // Auto-advance project carousel every 7 seconds (offset to avoid sync)
+            setTimeout(() => {
+                projectQuoteInterval = setInterval(nextProjectQuote, 7000);
+            }, 3000);
+        }
+        
+        function stopCarousels() {
+            clearInterval(quoteInterval);
+            clearInterval(projectQuoteInterval);
+        }
+        
+        function initializeCarouselDots() {
+            // Main carousel dots
+            const mainCarousel = document.getElementById('main-carousel');
+            if (mainCarousel) {
+                const mainDots = mainCarousel.parentElement.querySelectorAll('.carousel-dots .carousel-dot');
+                mainDots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => window.showQuote(index));
+                });
+            }
+            
+            // Project carousel dots
+            const projectCarousel = document.getElementById('projects-carousel');
+            if (projectCarousel) {
+                const projectDots = projectCarousel.parentElement.querySelectorAll('.carousel-dots .carousel-dot');
+                projectDots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => window.showProjectQuote(index));
+                });
+            }
+        }
+        
         // Fade in animation observer
         function initAnimations() {
             const observer = new IntersectionObserver((entries) => {
@@ -1189,6 +1520,19 @@
                 createBarChart('connections-chart', connectionsData);
                 createBarChart('projects-chart', projectsData);
                 initAnimations();
+                
+                // Initialize carousel dots with event listeners
+                initializeCarouselDots();
+                
+                // Start carousels after a short delay
+                setTimeout(startCarousels, 2000);
+                
+                // Pause carousels on hover
+                const carousels = document.querySelectorAll('.quotes-carousel');
+                carousels.forEach(carousel => {
+                    carousel.addEventListener('mouseenter', stopCarousels);
+                    carousel.addEventListener('mouseleave', startCarousels);
+                });
             }, 500);
         });
         
