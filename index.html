@@ -359,6 +359,7 @@
             padding: 32px;
             margin: 32px 0;
             position: relative;
+            overflow-x: auto;
         }
         
         .chart-container::before {
@@ -371,50 +372,42 @@
             background: var(--gradient-accent);
         }
         
-        .bar-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
         .bar-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+            min-height: auto;
+            padding: 8px 0;
         }
         
         .bar-label {
-            font-size: 14px;
-            font-weight: 600;
-            min-width: 140px;
-            flex-shrink: 0;
-            color: var(--text-primary);
+            min-width: auto;
+            font-size: 13px;
+            text-align: left;
+            margin-bottom: 4px;
         }
         
         .bar-track {
-            flex: 1;
-            height: 12px;
-            background: var(--bg-primary);
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--border);
+            min-width: auto;
+            height: 16px;
+            position: relative; /* Add positioning context */
+            overflow: visible; /* Allow the fill to be visible */
         }
         
         .bar-fill {
+            position: absolute; /* Position absolutely within track */
+            top: 0;
+            left: 0;
             height: 100%;
-            background: var(--gradient-accent);
-            border-radius: 6px;
             transition: width 1.2s ease;
-            width: 0%;
-            box-shadow: 0 0 10px var(--glow-green);
+            width: 0%; /* Start at 0 */
         }
         
         .bar-value {
-            font-size: 13px;
-            font-weight: 700;
-            min-width: 40px;
-            text-align: right;
-            color: var(--accent-green);
+            text-align: left;
+            min-width: auto;
+            font-size: 12px;
+            margin-top: 4px;
         }
         
         /* Alerts */
@@ -543,12 +536,14 @@
             border-radius: 12px;
             border: 1px solid var(--border);
             background: var(--bg-secondary);
+            -webkit-overflow-scrolling: touch;
         }
         
         .table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
+            min-width: 600px;
         }
         
         .table th,
@@ -556,6 +551,7 @@
             padding: 16px 20px;
             text-align: left;
             border-bottom: 1px solid var(--border);
+            white-space: nowrap;
         }
         
         .table th {
@@ -655,68 +651,6 @@
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(180deg); }
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 16px;
-            }
-            
-            .hero {
-                padding: 60px 0;
-            }
-            
-            .hero-stats {
-                gap: 40px;
-            }
-            
-            .section {
-                padding: 60px 0;
-            }
-            
-            .section-header {
-                margin-bottom: 50px;
-            }
-            
-            .grid {
-                gap: 24px;
-            }
-            
-            .bar-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-            
-            .bar-label {
-                min-width: auto;
-            }
-            
-            .logo-image {
-                width: 250px;
-            }
-            
-            .section-title {
-                font-size: 32px;
-            }
-            
-            /* Carousel mobile adjustments */
-            .quotes-carousel {
-                padding: 32px 20px;
-            }
-            
-            .carousel-container {
-                height: 260px;
-            }
-            
-            .quote-slide {
-                padding: 0 20px;
-            }
-            
-            .quote-text {
-                font-size: 16px;
-            }
         }
         
         /* Theme Toggle */
@@ -885,6 +819,294 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Mobile Responsive Improvements */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .hero-stats {
+                gap: 32px;
+            }
+            
+            .hero-stat-number {
+                font-size: 32px;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-header {
+                margin-bottom: 50px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .section-description {
+                font-size: 16px;
+            }
+            
+            /* Grid improvements */
+            .grid {
+                gap: 20px;
+            }
+            
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-4 {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            /* Card improvements */
+            .card {
+                padding: 24px;
+            }
+            
+            .metric-card {
+                padding: 32px 20px;
+            }
+            
+            .metric-number {
+                font-size: 40px;
+            }
+            
+            /* Chart container improvements */
+            .chart-container {
+                padding: 20px;
+                margin: 24px 0;
+            }
+            
+            /* Bar chart mobile layout */
+            .bar-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                min-height: auto;
+                padding: 8px 0;
+            }
+            
+            .bar-label {
+                min-width: auto;
+                font-size: 13px;
+                text-align: left;
+                margin-bottom: 4px;
+            }
+            
+            .bar-track {
+                min-width: auto;
+                height: 16px;
+                width: 100%; /* Ensure full width */
+                position: relative; /* Add positioning context */
+            }
+            
+            .bar-value {
+                text-align: left;
+                min-width: auto;
+                font-size: 12px;
+                margin-top: 4px;
+            }
+            
+            .bar-fill {
+                position: absolute; /* Position absolutely within track */
+                top: 0;
+                left: 0;
+                height: 100%;
+            }
+            
+            /* Table mobile improvements */
+            .table-container {
+                margin: 20px -16px;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+            
+            .table {
+                font-size: 12px;
+                min-width: 500px;
+            }
+            
+            .table th,
+            .table td {
+                padding: 12px 8px;
+            }
+            
+            .table th:first-child,
+            .table td:first-child {
+                padding-left: 16px;
+            }
+            
+            .table th:last-child,
+            .table td:last-child {
+                padding-right: 16px;
+            }
+            
+            /* Logo improvements */
+            .logo-image {
+                width: 250px;
+            }
+            
+            /* Carousel mobile adjustments */
+            .quotes-carousel {
+                padding: 32px 16px;
+                margin: 48px 0;
+            }
+            
+            .carousel-container {
+                height: auto;
+                min-height: 200px;
+            }
+            
+            .quote-slide {
+                padding: 0 16px;
+                position: relative;
+                height: auto;
+                min-height: 200px;
+            }
+            
+            .quote-text {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+            
+            .carousel-dots {
+                gap: 8px;
+                margin-top: 24px;
+            }
+            
+            .carousel-dot {
+                width: 10px;
+                height: 10px;
+            }
+            
+            /* Mini quote improvements */
+            .mini-quote {
+                padding: 16px;
+                margin: 20px 0;
+                font-size: 14px;
+            }
+            
+            .mini-quote::before {
+                font-size: 32px;
+                top: -8px;
+                left: 12px;
+            }
+            
+            /* Issue card improvements */
+            .issue-card {
+                padding: 24px;
+            }
+            
+            .card-title {
+                font-size: 18px;
+            }
+            
+            /* Theme toggle mobile */
+            .theme-toggle {
+                top: 16px;
+                right: 16px;
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            /* Alert improvements */
+            .alert {
+                padding: 16px;
+                font-size: 14px;
+            }
+            
+            /* Badge improvements */
+            .badge {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+        }
+        
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 12px;
+            }
+            
+            .hero-stats {
+                gap: 24px;
+            }
+            
+            .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 24px;
+            }
+            
+            .quote-text {
+                font-size: 15px;
+            }
+            
+            .table {
+                min-width: 450px;
+                font-size: 11px;
+            }
+            
+            .chart-container {
+                padding: 16px;
+            }
+            
+            .bar-label {
+                font-size: 12px;
+            }
+            
+            .bar-value {
+                font-size: 11px;
+            }
+            
+            .metric-number {
+                font-size: 36px;
+            }
+            
+            .hero-stat-number {
+                font-size: 28px;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .hero {
+                padding: 40px 0;
+            }
+            
+            .section {
+                padding: 40px 0;
+            }
+            
+            .carousel-container {
+                height: 160px;
+                min-height: 160px;
+            }
+            
+            .quote-slide {
+                min-height: 160px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -898,7 +1120,7 @@
     <section class="logo-section">
         <div class="container">
             <div class="logo-container">
-                <img src="bc-ai-logo.png" alt="BC+AI Ecosystem Logo" class="logo-image" />
+              <img src="bc-ai-logo.png" alt="BC+AI Ecosystem Logo" class="logo-image" />
             </div>
         </div>
     </section>
@@ -1242,6 +1464,10 @@
                 <p class="section-description">Comprehensive breakdown of themes, mentions, and community sentiment</p>
             </div>
             
+            <div style="margin-bottom: 20px; padding: 16px; background: rgba(6, 182, 212, 0.1); border: 1px solid var(--accent-cyan); border-radius: 8px; color: var(--accent-cyan); font-size: 14px;">
+                📱 <strong>Mobile Tip:</strong> Scroll horizontally to view all table columns
+            </div>
+            
             <div class="table-container">
                 <table class="table">
                     <thead>
@@ -1256,49 +1482,49 @@
                         <tr>
                             <td><strong>Community</strong></td>
                             <td>199</td>
-                            <td>Networking, collaboration, events, inclusion</td>
+                            <td>Networking, collaboration, events</td>
                             <td><span class="badge badge-success">Highly Positive</span></td>
                         </tr>
                         <tr>
                             <td><strong>Infrastructure</strong></td>
                             <td>153</td>
-                            <td>Platforms, tools, technical systems, development</td>
+                            <td>Platforms, tools, systems</td>
                             <td><span class="badge badge-secondary">Neutral</span></td>
                         </tr>
                         <tr>
                             <td><strong>Funding</strong></td>
                             <td>120</td>
-                            <td>Investment, grants, financial support, barriers</td>
+                            <td>Investment, grants, barriers</td>
                             <td><span class="badge badge-warning">Concerned</span></td>
                         </tr>
                         <tr>
                             <td><strong>Talent</strong></td>
                             <td>87</td>
-                            <td>Skills, education, workforce development</td>
+                            <td>Skills, education, workforce</td>
                             <td><span class="badge badge-secondary">Neutral</span></td>
                         </tr>
                         <tr>
                             <td><strong>Ethics</strong></td>
                             <td>71</td>
-                            <td>Responsible AI, governance, safety protocols</td>
+                            <td>Responsible AI, governance</td>
                             <td><span class="badge badge-success">Positive</span></td>
                         </tr>
                         <tr>
                             <td><strong>Startups</strong></td>
                             <td>58</td>
-                            <td>Entrepreneurship, innovation, business development</td>
+                            <td>Entrepreneurship, innovation</td>
                             <td><span class="badge badge-primary">Optimistic</span></td>
                         </tr>
                         <tr>
                             <td><strong>Research</strong></td>
                             <td>51</td>
-                            <td>Academic collaboration, R&D, innovation</td>
+                            <td>Academic collaboration, R&D</td>
                             <td><span class="badge badge-primary">Engaged</span></td>
                         </tr>
                         <tr>
                             <td><strong>Government</strong></td>
                             <td>49</td>
-                            <td>Policy, regulation, public sector engagement</td>
+                            <td>Policy, regulation, public sector</td>
                             <td><span class="badge badge-warning">Disconnected</span></td>
                         </tr>
                     </tbody>
@@ -1350,7 +1576,7 @@
             { label: "Business", value: 1, color: "#f59e0b" }
         ];
         
-        // Create bar chart function with enhanced styling
+        // Create bar chart function with enhanced mobile styling
         function createBarChart(containerId, data) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -1372,6 +1598,8 @@
                 const fill = document.createElement("div");
                 fill.className = "bar-fill";
                 fill.style.background = `linear-gradient(90deg, ${item.color}, ${item.color}aa)`;
+                // Explicitly set initial width to 0%
+                fill.style.width = "0%";
                 
                 const value = document.createElement("div");
                 value.className = "bar-value";
@@ -1383,9 +1611,14 @@
                 barItem.appendChild(value);
                 container.appendChild(barItem);
                 
-                // Animate with stagger effect
+                // Force a reflow to ensure the animation works properly
+                void fill.offsetWidth;
+                
+                // Animate with stagger effect and use requestAnimationFrame for better performance
                 setTimeout(() => {
-                    fill.style.width = ((item.value / maxValue) * 100) + "%";
+                    requestAnimationFrame(() => {
+                        fill.style.width = ((item.value / maxValue) * 100) + "%";
+                    });
                 }, 300 + (index * 150));
             });
         }
